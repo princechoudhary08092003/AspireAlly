@@ -2,9 +2,11 @@
 node_modules/
 */node_modules/
 
-# Environment
+# Environment — never commit real secrets
 .env
 server/.env
+client/.env.local
+# .env.production is safe to commit (only has the API URL, no secrets)
 
 # Database (local SQLite)
 *.sqlite
