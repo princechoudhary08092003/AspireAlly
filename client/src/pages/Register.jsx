@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { GoogleLogin } from '@react-oauth/google'
 import toast from 'react-hot-toast'
 import { FiArrowRight, FiUser, FiMail, FiLock } from 'react-icons/fi'
 
 export default function Register() {
-  const { register } = useAuth()
+  const { register, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const [form, setForm] = useState({ firstName: '', lastName: '', email: '', password: '', role: params.get('role') || 'mentee' })
@@ -19,12 +20,21 @@ export default function Register() {
     if (form.password.length < 8) return setError('Password must be at least 8 characters')
     setLoading(true)
     try {
-      const user = await register(form)
-      toast.success(`Welcome to Aspire Ally, ${user.firstName}!`)
-      navigate(user.role === 'mentor' ? '/mentor/dashboard' : '/mentee/dashboard')
+      await register(form)
+      navigate(`/verify-email-sent?email=${encodeURIComponent(form.email)}`)
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed')
     } finally { setLoading(false) }
+  }
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const user = await loginWithGoogle(credentialResponse.credential)
+      toast.success(`Welcome to Aspire Ally, ${user.firstName}!`)
+      navigate(user.role === 'mentor' ? '/mentor/dashboard' : '/mentee/dashboard')
+    } catch (err) {
+      setError(err.response?.data?.message || 'Google sign-in failed')
+    }
   }
 
   return (
@@ -83,7 +93,7 @@ export default function Register() {
             </p>
           </div>
 
-          {/* Role toggle (mobile visible too) */}
+          {/* Role toggle */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 24, padding: 5, background: 'var(--bg)', borderRadius: 12, border: '1px solid var(--border)' }}>
             {['mentee', 'mentor'].map(role => (
               <button key={role} type="button" onClick={() => setForm(p => ({ ...p, role }))}
@@ -126,10 +136,29 @@ export default function Register() {
             <button type="submit" className={`btn btn-full btn-lg ${form.role === 'mentee' ? 'btn-primary' : 'btn-maroon'}`} disabled={loading} style={{ marginTop: 6, borderRadius: 10 }}>
               {loading ? 'Creating account…' : <><span>Create Account</span><FiArrowRight /></>}
             </button>
-            <p style={{ fontSize: 12, color: 'var(--text-4)', textAlign: 'center', lineHeight: 1.6 }}>
-              By joining you agree to our Terms of Service and Privacy Policy
-            </p>
           </form>
+
+          {/* Divider */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0' }}>
+            <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+            <span style={{ fontSize: 12, color: 'var(--text-4)', whiteSpace: 'nowrap' }}>or continue with</span>
+            <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+          </div>
+
+          {/* Google Sign-In */}
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => setError('Google sign-in failed. Please try again.')}
+              text="signup_with"
+              shape="pill"
+              width="360"
+            />
+          </div>
+
+          <p style={{ fontSize: 12, color: 'var(--text-4)', textAlign: 'center', lineHeight: 1.6, marginTop: 16 }}>
+            By joining you agree to our Terms of Service and Privacy Policy
+          </p>
         </div>
       </div>
     </div>

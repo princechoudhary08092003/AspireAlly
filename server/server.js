@@ -27,14 +27,14 @@ const seedAdmin = async () => {
   const exists = await User.findOne({ where: { email: adminEmail } });
   if (!exists) {
     const hashed = await bcrypt.hash(process.env.ADMIN_PASSWORD || 'Admin@123', 12);
-    await User.create({ email: adminEmail, password: hashed, firstName: 'Admin', lastName: 'MentorPath', role: 'admin' });
+    await User.create({ email: adminEmail, password: hashed, firstName: 'Admin', lastName: 'AspireAlly', role: 'admin', isEmailVerified: true });
     console.log(`Admin created: ${adminEmail}`);
   }
 };
 
 const PORT = process.env.PORT || 5000;
 
-sequelize.sync({ alter: false }).then(async () => {
+sequelize.sync({ alter: true }).then(async () => {
   await seedAdmin();
   app.listen(PORT, () => console.log(`MentorPath server running on http://localhost:${PORT}`));
 }).catch(err => console.error('DB sync error:', err));

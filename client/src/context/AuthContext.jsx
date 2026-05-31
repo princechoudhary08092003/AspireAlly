@@ -29,7 +29,14 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (payload) => {
     const { data } = await api.post('/auth/register', payload)
+    // No JWT returned — user must verify email first
+    return data
+  }
+
+  const loginWithGoogle = async (idToken) => {
+    const { data } = await api.post('/auth/google', { idToken })
     localStorage.setItem('mp_token', data.token)
+    localStorage.setItem('mp_user', JSON.stringify(data.user))
     setUser(data.user)
     return data.user
   }
@@ -48,7 +55,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, login, register, loginWithGoogle, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   )
