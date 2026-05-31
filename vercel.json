@@ -2,7 +2,11 @@
   "installCommand": "npm install && npm install --prefix server && npm install --include=dev --prefix client",
   "buildCommand": "npm --prefix client run build",
   "outputDirectory": "client/dist",
-  "framework": null,
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "server/**"
+    }
+  },
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/index.js" },
     { "handle": "filesystem" },
