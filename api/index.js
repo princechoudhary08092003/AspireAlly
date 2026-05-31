@@ -6,9 +6,16 @@ let ready = false;
 
 module.exports = async (req, res) => {
   if (!ready) {
-    await sequelize.sync({ alter: false });
-    await seedAll();
-    ready = true;
+    try {
+      await sequelize.authenticate();
+      await sequelize.sync({ alter: false });
+      await seedAll();
+      ready = true;
+      console.log('DB ready and seeded');
+    } catch (err) {
+      console.error('Init error:', err.message);
+      // Still attempt to handle request even if seed fails
+    }
   }
   return app(req, res);
 };
