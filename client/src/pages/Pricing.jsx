@@ -167,24 +167,10 @@ export default function Pricing() {
         </p>
       </div>
 
-      {/* FAQ / reassurance */}
-      <div style={{ background: '#fff', padding: '64px 0' }}>
-        <div className="container" style={{ maxWidth: 720 }}>
-          <h3 style={{ fontSize: 22, fontWeight: 700, textAlign: 'center', marginBottom: 40 }}>Frequently Asked Questions</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {[
-              ['Can I cancel anytime?', 'Yes. You can cancel your subscription at any time from your dashboard with no cancellation fee.'],
-              ['How do I book a session?', 'Once subscribed, go to Find Mentors, pick a mentor, and choose from their available time slots.'],
-              ['What happens after booking?', 'Your mentor will add a Zoom/Teams link before the session. You\'ll see it in your dashboard.'],
-              ['Is there a free trial?', 'We offer a 7-day refund policy on all plans. If you\'re not satisfied, contact us for a full refund.'],
-            ].map(([q, a]) => (
-              <div key={q} style={{ padding: '20px 24px', background: 'var(--bg)', borderRadius: 14, border: '1px solid var(--border)' }}>
-                <p style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>{q}</p>
-                <p style={{ fontSize: 14, color: 'var(--text-3)', lineHeight: 1.65 }}>{a}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+      {/* Redirect to full FAQs */}
+      <div style={{ textAlign: 'center', padding: '40px 0 80px' }}>
+        <p style={{ fontSize: 14, color: 'var(--text-3)', marginBottom: 14 }}>Have questions about how the programme works?</p>
+        <Link to="/#faqs" className="btn btn-ghost btn-pill">View All FAQs on Homepage →</Link>
       </div>
     </div>
   )

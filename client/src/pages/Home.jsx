@@ -6,7 +6,8 @@ import toast from 'react-hot-toast'
 import {
   FiArrowRight, FiCheckCircle, FiLinkedin, FiLock,
   FiMail, FiStar, FiUsers, FiCalendar, FiTrendingUp,
-  FiTarget, FiAward, FiBook, FiZap, FiShield
+  FiTarget, FiAward, FiBook, FiZap, FiShield,
+  FiMessageSquare, FiPlus, FiMinus, FiHeart, FiGlobe, FiLayers
 } from 'react-icons/fi'
 
 /* ── DATA ──────────────────────────────────────── */
@@ -70,6 +71,178 @@ const STATS = [
   { val: '95%', lbl: 'Mentee Satisfaction', icon: <FiTrendingUp /> },
   { val: '12+', lbl: 'Industries Covered', icon: <FiAward /> },
 ]
+
+/* ── WHY MENTOR DATA ───────────────────────────── */
+const MENTOR_REASONS = [
+  {
+    icon: <FiHeart size={22} />,
+    title: 'Give Back to the Next Generation',
+    desc: 'After years of navigating corporate challenges, mentoring is the most meaningful way to pay it forward — helping talented professionals avoid the pitfalls you once faced.',
+    color: '#881337',
+    bg: '#fff1f2',
+  },
+  {
+    icon: <FiGlobe size={22} />,
+    title: 'Expand Your Own Network',
+    desc: "Mentoring isn't one-directional. You gain fresh perspectives, build relationships with high-potential professionals, and stay connected to the evolving pulse of your industry.",
+    color: '#2563EB',
+    bg: '#eff6ff',
+  },
+  {
+    icon: <FiLayers size={22} />,
+    title: 'Sharpen Your Leadership Edge',
+    desc: 'Teaching what you know forces you to articulate, organise and refine your thinking. Mentors consistently report becoming better communicators and stronger leaders.',
+    color: '#C9920B',
+    bg: '#fefce8',
+  },
+  {
+    icon: <FiTrendingUp size={22} />,
+    title: 'Create Measurable Impact',
+    desc: "One honest conversation can redirect a career. As a mentor on Aspire Ally, you'll guide structured sessions — not just advise, but co-create real action plans that produce results.",
+    color: '#059669',
+    bg: '#f0fdf4',
+  },
+  {
+    icon: <FiAward size={22} />,
+    title: 'Build a Legacy of Excellence',
+    desc: "Your career achievements become a blueprint others can follow. Aspire Ally lets you formalise your expertise into a structured programme that outlasts any single session.",
+    color: '#7C3AED',
+    bg: '#f5f3ff',
+  },
+  {
+    icon: <FiUsers size={22} />,
+    title: 'Be Part of a Curated Community',
+    desc: "Join an exclusive network of senior leaders who believe in structured, high-quality mentorship. Share best practices, collaborate on career frameworks, and elevate the profession.",
+    color: '#0891B2',
+    bg: '#ecfeff',
+  },
+]
+
+/* ── TESTIMONIALS DATA ─────────────────────────── */
+const TESTIMONIALS = [
+  {
+    name: 'Priya Sharma',
+    role: 'Marketing Manager → Head of Brand',
+    company: 'Fintech Startup, Bengaluru',
+    quote: "I had been stuck at the same designation for three years, unsure of what was holding me back. My Aspire Ally mentor helped me see exactly where my gaps were and how to fill them. Within six months I was heading a brand team.",
+    rating: 5,
+    initials: 'PS',
+    gradient: 'linear-gradient(135deg,#2563EB,#1D4ED8)',
+    tag: 'Career Transition',
+  },
+  {
+    name: 'Arjun Mehta',
+    role: 'Software Engineer → Product Manager',
+    company: 'SaaS Company, Pune',
+    quote: "The STAR goal-setting session was a game-changer. I walked in with vague aspirations and walked out with a 90-day plan. My mentor's cross-industry perspective pushed me to think bigger than my immediate role.",
+    rating: 5,
+    initials: 'AM',
+    gradient: 'linear-gradient(135deg,#881337,#5C0D26)',
+    tag: 'Role Switch',
+  },
+  {
+    name: 'Neha Kapoor',
+    role: 'MBA Fresher → Strategy Analyst',
+    company: 'Big 4 Consulting, Delhi',
+    quote: "As a fresh MBA graduate the job market was overwhelming. My mentor had been through it all — the interview circuits, the negotiations, the politics. Their coaching gave me real confidence, not just textbook answers.",
+    rating: 5,
+    initials: 'NK',
+    gradient: 'linear-gradient(135deg,#C9920B,#F59E0B)',
+    tag: 'Campus to Corporate',
+  },
+  {
+    name: 'Rohan Dsouza',
+    role: 'Sales Executive → Business Development Lead',
+    company: 'FMCG Enterprise, Mumbai',
+    quote: "What sets Aspire Ally apart is the structure. It's not just a chat — there's a clear framework, clear outcomes. My mentor held me accountable, reviewed my progress, and pushed me when I needed it.",
+    rating: 5,
+    initials: 'RD',
+    gradient: 'linear-gradient(135deg,#059669,#047857)',
+    tag: 'Leadership Growth',
+  },
+]
+
+/* ── FAQS DATA ─────────────────────────────────── */
+const FAQS = [
+  {
+    q: 'Who is the Aspire Ally programme designed for?',
+    a: 'Aspire Ally is built for working professionals, MBA graduates, and career switchers who want structured, personalised guidance — not generic advice. Whether you are two years into your career or ten, if you are serious about growth, this is for you.',
+  },
+  {
+    q: 'How does mentor matching work?',
+    a: 'You browse our curated roster of approved mentors — each with detailed profiles including expertise, industry background, and availability. You pick who resonates with your goals and book directly from their open slots.',
+  },
+  {
+    q: 'What actually happens in a session?',
+    a: 'Sessions are 1-on-1 and typically 60 minutes. Your mentor will prepare based on your goals and notes submitted at booking. Sessions cover strategic career mapping, specific challenges, industry insight, and concrete action points — not casual conversation.',
+  },
+  {
+    q: 'Is the programme fully online?',
+    a: 'Yes, completely. Sessions happen via Zoom, Microsoft Teams, or Google Meet. Your mentor adds the link before the session and you access it directly from your dashboard.',
+  },
+  {
+    q: 'Can I book sessions with multiple mentors?',
+    a: 'Absolutely. With an active subscription you can book sessions with any approved mentor on the platform. Many mentees work with two or three mentors across different functional areas.',
+  },
+  {
+    q: 'How do I become a mentor on Aspire Ally?',
+    a: 'Register as a mentor, complete your profile, and submit for review. Our admin team personally reviews each application to ensure quality. Once approved, you set your own availability and begin accepting bookings.',
+  },
+  {
+    q: 'What makes Aspire Ally different from LinkedIn networking?',
+    a: 'LinkedIn gets you a connection; Aspire Ally gets you a structured relationship with accountability. Every interaction follows a defined framework — onboarding, STAR goal-setting, sessions, and an action roadmap — designed to produce measurable career outcomes.',
+  },
+  {
+    q: 'Is my session information kept confidential?',
+    a: 'Yes. Notes, goals, and session details are only visible to you and your mentor. Aspire Ally does not share individual session content with third parties.',
+  },
+]
+
+/* ── FAQ ITEM ──────────────────────────────────── */
+function FaqItem({ faq, index }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div style={{
+      border: `1px solid ${open ? 'var(--primary)' : 'var(--border)'}`,
+      borderRadius: 14,
+      overflow: 'hidden',
+      transition: 'border-color .2s, box-shadow .2s',
+      boxShadow: open ? '0 4px 20px rgba(37,99,235,.1)' : 'none',
+      background: '#fff',
+    }}>
+      <button
+        onClick={() => setOpen(!open)}
+        style={{
+          width: '100%', padding: '20px 24px', display: 'flex', alignItems: 'center',
+          justifyContent: 'space-between', gap: 16, background: 'none', border: 'none',
+          cursor: 'pointer', textAlign: 'left',
+        }}>
+        <span style={{ fontSize: 15, fontWeight: 600, color: open ? 'var(--primary)' : 'var(--text)', lineHeight: 1.4 }}>
+          {faq.q}
+        </span>
+        <div style={{
+          width: 28, height: 28, borderRadius: '50%', flexShrink: 0, display: 'flex',
+          alignItems: 'center', justifyContent: 'center',
+          background: open ? 'var(--primary)' : 'var(--bg-2)',
+          transition: 'all .2s',
+        }}>
+          {open
+            ? <FiMinus size={13} color="#fff" />
+            : <FiPlus size={13} color="var(--text-3)" />
+          }
+        </div>
+      </button>
+      <div style={{
+        maxHeight: open ? 300 : 0, overflow: 'hidden',
+        transition: 'max-height .3s ease',
+      }}>
+        <p style={{ padding: '0 24px 20px', fontSize: 14, color: 'var(--text-2)', lineHeight: 1.75 }}>
+          {faq.a}
+        </p>
+      </div>
+    </div>
+  )
+}
 
 /* ── ADMIN LOGIN MODAL ─────────────────────────── */
 function AdminLoginModal({ onClose }) {
@@ -399,6 +572,137 @@ export default function Home() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 28, maxWidth: 800, margin: '0 auto' }}>
             {ADVISORS.map(p => <PersonCard key={p.name} person={p} type="advisor" />)}
+          </div>
+        </div>
+      </section>
+
+      {/* ── WHY BECOME A MENTOR ── */}
+      <section className="section" style={{ background: 'var(--navy)' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: 60 }}>
+            <div className="section-label section-label-dark" style={{ margin: '0 auto 18px' }}>
+              <FiHeart size={12} /> For Mentors
+            </div>
+            <h2 className="h1" style={{ color: '#fff', marginBottom: 14 }}>
+              Why Senior Leaders <span style={{ background: 'var(--grad-gold)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Choose to Mentor</span>
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,.6)', fontSize: 16, lineHeight: 1.75, maxWidth: 560, margin: '0 auto 32px' }}>
+              Mentorship is not charity — it's one of the most professionally and personally rewarding things a leader can do. Here's why the best in the industry give their time.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(320px,1fr))', gap: 20 }}>
+            {MENTOR_REASONS.map((r, i) => (
+              <div key={i} style={{
+                padding: '24px 26px',
+                background: 'rgba(255,255,255,.04)',
+                border: '1px solid rgba(255,255,255,.08)',
+                borderRadius: 16,
+                transition: 'all .25s',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,.07)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,.16)'; e.currentTarget.style.transform = 'translateY(-3px)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,.08)'; e.currentTarget.style.transform = 'translateY(0)' }}>
+                <div style={{
+                  width: 48, height: 48, borderRadius: 12, marginBottom: 18,
+                  background: r.bg, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: r.color,
+                }}>
+                  {r.icon}
+                </div>
+                <h4 style={{ fontSize: 15, fontWeight: 700, color: '#fff', marginBottom: 10, lineHeight: 1.35 }}>{r.title}</h4>
+                <p style={{ fontSize: 13.5, color: 'rgba(255,255,255,.58)', lineHeight: 1.72 }}>{r.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ textAlign: 'center', marginTop: 48 }}>
+            <Link to="/register?role=mentor" className="btn btn-gold btn-lg btn-pill">
+              Apply as a Mentor <FiArrowRight />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TESTIMONIALS ── */}
+      <section className="section" style={{ background: 'var(--bg)' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <div className="section-label section-label-maroon" style={{ margin: '0 auto 18px' }}>
+              <FiMessageSquare size={12} /> Mentee Voices
+            </div>
+            <h2 className="h1" style={{ marginBottom: 14 }}>
+              Real People. <span className="text-gradient">Real Breakthroughs.</span>
+            </h2>
+            <p className="lead" style={{ maxWidth: 500, margin: '0 auto' }}>
+              Don't take our word for it — hear from professionals who've already walked this path.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))', gap: 22 }}>
+            {TESTIMONIALS.map((t, i) => (
+              <div key={i} className="card" style={{
+                padding: 28, display: 'flex', flexDirection: 'column', gap: 20,
+                borderTop: `3px solid ${i % 2 === 0 ? 'var(--primary)' : 'var(--maroon)'}`,
+                transition: 'all .25s',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.boxShadow = 'var(--sh-xl)'; e.currentTarget.style.transform = 'translateY(-4px)' }}
+                onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)' }}>
+                {/* Stars */}
+                <div style={{ display: 'flex', gap: 3 }}>
+                  {Array.from({ length: t.rating }).map((_, s) => (
+                    <FiStar key={s} size={14} style={{ fill: 'var(--gold-b)', color: 'var(--gold-b)' }} />
+                  ))}
+                </div>
+
+                {/* Quote */}
+                <p style={{ fontSize: 14.5, color: 'var(--text-2)', lineHeight: 1.78, fontStyle: 'italic', flex: 1 }}>
+                  "{t.quote}"
+                </p>
+
+                {/* Tag */}
+                <span style={{ alignSelf: 'flex-start', padding: '3px 12px', borderRadius: 100, fontSize: 11, fontWeight: 700, background: 'var(--primary-xl)', color: 'var(--primary-d)' }}>
+                  {t.tag}
+                </span>
+
+                {/* Person */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingTop: 16, borderTop: '1px solid var(--border)' }}>
+                  <div className="av-placeholder av-sm" style={{ borderRadius: '50%', background: t.gradient, fontSize: 13, flexShrink: 0 }}>
+                    {t.initials}
+                  </div>
+                  <div>
+                    <p style={{ fontSize: 14, fontWeight: 700, marginBottom: 1 }}>{t.name}</p>
+                    <p style={{ fontSize: 12, color: 'var(--text-3)' }}>{t.role}</p>
+                    <p style={{ fontSize: 11, color: 'var(--text-4)' }}>{t.company}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQs ── */}
+      <section className="section" style={{ background: '#fff' }}>
+        <div className="container">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.6fr', gap: 72, alignItems: 'start' }}>
+            {/* Left sticky label */}
+            <div style={{ position: 'sticky', top: 100 }}>
+              <div className="section-label section-label-blue" style={{ marginBottom: 20 }}>FAQs</div>
+              <h2 className="h1" style={{ marginBottom: 16 }}>
+                Everything You <span className="text-gradient">Need to Know</span>
+              </h2>
+              <p style={{ color: 'var(--text-3)', fontSize: 15, lineHeight: 1.75, marginBottom: 32 }}>
+                Got a question that's not answered here? We're just a message away.
+              </p>
+              <a href="mailto:hello@aspireally.in" className="btn btn-outline btn-pill" style={{ gap: 8 }}>
+                <FiMail size={14} /> Ask Us Directly
+              </a>
+            </div>
+
+            {/* Right accordion */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {FAQS.map((faq, i) => <FaqItem key={i} faq={faq} index={i} />)}
+            </div>
           </div>
         </div>
       </section>
