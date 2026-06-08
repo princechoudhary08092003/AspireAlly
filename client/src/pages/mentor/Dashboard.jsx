@@ -198,14 +198,25 @@ export default function MentorDashboard() {
               {addingSlot && (
                 <div style={{ padding: 16, borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
                   {newSlots.map((slot, i) => (
-                    <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 10 }}>
-                      <input type="date" className="form-input" style={{ fontSize: 12, padding: '7px 10px' }} value={slot.date} onChange={e => setNewSlots(p => p.map((s, j) => j === i ? { ...s, date: e.target.value } : s))} />
-                      <input type="time" className="form-input" style={{ fontSize: 12, padding: '7px 10px' }} placeholder="Start" value={slot.startTime} onChange={e => setNewSlots(p => p.map((s, j) => j === i ? { ...s, startTime: e.target.value } : s))} />
-                      <input type="time" className="form-input" style={{ fontSize: 12, padding: '7px 10px' }} placeholder="End" value={slot.endTime} onChange={e => setNewSlots(p => p.map((s, j) => j === i ? { ...s, endTime: e.target.value } : s))} />
+                    <div key={i} style={{ marginBottom: 12, padding: 10, background: '#fff', borderRadius: 10, border: '1px solid var(--border)' }}>
+                      <input type="date" className="form-input" style={{ fontSize: 12, padding: '7px 10px', marginBottom: 6, width: '100%', boxSizing: 'border-box' }}
+                        value={slot.date} onChange={e => setNewSlots(p => p.map((s, j) => j === i ? { ...s, date: e.target.value } : s))} />
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+                        <div>
+                          <p style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 3 }}>Start time</p>
+                          <input type="time" className="form-input" style={{ fontSize: 12, padding: '7px 10px', width: '100%', boxSizing: 'border-box' }}
+                            value={slot.startTime} onChange={e => setNewSlots(p => p.map((s, j) => j === i ? { ...s, startTime: e.target.value } : s))} />
+                        </div>
+                        <div>
+                          <p style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 3 }}>End time</p>
+                          <input type="time" className="form-input" style={{ fontSize: 12, padding: '7px 10px', width: '100%', boxSizing: 'border-box' }}
+                            value={slot.endTime} onChange={e => setNewSlots(p => p.map((s, j) => j === i ? { ...s, endTime: e.target.value } : s))} />
+                        </div>
+                      </div>
                     </div>
                   ))}
                   <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
-                    <button className="btn btn-ghost btn-sm" onClick={() => setNewSlots(p => [...p, { date: '', startTime: '', endTime: '', durationMinutes: 60 }])}>+ Row</button>
+                    <button className="btn btn-ghost btn-sm" onClick={() => setNewSlots(p => [...p, { date: '', startTime: '', endTime: '', durationMinutes: 60 }])}>+ Add Another</button>
                     <button className="btn btn-secondary btn-sm" onClick={handleAddSlots}>Save Slots</button>
                   </div>
                 </div>
