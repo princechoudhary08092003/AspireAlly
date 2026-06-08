@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../utils/api'
 import toast from 'react-hot-toast'
-import { FiCheck, FiX, FiEye, FiEyeOff, FiEdit, FiArrowLeft } from 'react-icons/fi'
+import { FiCheck, FiX, FiEye, FiEyeOff, FiEdit, FiArrowLeft, FiRepeat } from 'react-icons/fi'
 
 export default function ManageMentors() {
   const [mentors, setMentors] = useState([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState('all')
+  const [changing, setChanging] = useState(null)
 
   const refresh = () => api.get('/admin/mentors').then(r => setMentors(r.data)).finally(() => setLoading(false))
 
@@ -35,6 +36,17 @@ export default function ManageMentors() {
       toast.success('User status updated')
       refresh()
     } catch { toast.error('Failed') }
+  }
+
+  const handleMakeMentee = async (id, name) => {
+    if (!window.confirm(`Change ${name} to Mentee? Their mentor profile will be kept but they won't appear as a mentor.`)) return
+    setChanging(id)
+    try {
+      await api.put(`/admin/users/${id}/role`, { role: 'mentee' })
+      toast.success(`${name} is now a Mentee`)
+      refresh()
+    } catch { toast.error('Failed to change role') }
+    finally { setChanging(null) }
   }
 
   const filtered = tab === 'pending' ? mentors.filter(m => !m.mentorProfile?.isApproved)
@@ -129,6 +141,13 @@ export default function ManageMentors() {
                           </button>
                         )
                       )}
+                      <button
+                        disabled={changing === mentor.id}
+                        onClick={() => handleMakeMentee(mentor.id, `${mentor.firstName} ${mentor.lastName}`)}
+                        className="btn btn-sm btn-outline"
+                        style={{ gap: 5, fontSize: 12 }}>
+                        <FiRepeat size={11} /> Make Mentee
+                      </button>
                       <button className={`btn btn-sm ${mentor.isActive ? 'btn-danger' : 'btn-ghost'}`} onClick={() => handleToggle(mentor.id)}>
                         {mentor.isActive ? 'Deactivate' : 'Activate'}
                       </button>

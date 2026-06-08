@@ -123,6 +123,24 @@ router.put('/users/:id/toggle-active', guard, async (req, res) => {
   }
 });
 
+// Change user role (mentee ↔ mentor)
+router.put('/users/:id/role', guard, async (req, res) => {
+  try {
+    const { role } = req.body;
+    if (!['mentor', 'mentee'].includes(role)) return res.status(400).json({ message: 'Invalid role' });
+    const user = await User.findByPk(req.params.id);
+    if (!user || user.role === 'admin') return res.status(404).json({ message: 'User not found' });
+    await user.update({ role });
+    if (role === 'mentor') {
+      const exists = await MentorProfile.findOne({ where: { userId: user.id } });
+      if (!exists) await MentorProfile.create({ userId: user.id });
+    }
+    res.json({ message: `Role changed to ${role}` });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // All bookings
 router.get('/bookings', guard, async (req, res) => {
   try {
