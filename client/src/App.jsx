@@ -44,9 +44,14 @@ const WithNav = ({ children }) => (
 
 const NoNav = ({ children }) => <>{children}</>
 
+const MaybeGoogleProvider = ({ children }) =>
+  GOOGLE_CLIENT_ID
+    ? <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>{children}</GoogleOAuthProvider>
+    : <>{children}</>
+
 export default function App() {
   return (
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+    <MaybeGoogleProvider>
       <BrowserRouter>
         <AuthProvider>
           <Toaster position="top-right" toastOptions={{ style: { fontFamily: 'Poppins, sans-serif', fontSize: 14 } }} />
@@ -96,6 +101,6 @@ export default function App() {
           </Routes>
         </AuthProvider>
       </BrowserRouter>
-    </GoogleOAuthProvider>
+    </MaybeGoogleProvider>
   )
 }
