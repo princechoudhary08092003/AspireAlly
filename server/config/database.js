@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize');
 const path = require('path');
-require('dotenv').config();
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 let sequelize;
 
@@ -15,7 +15,7 @@ if (process.env.DATABASE_URL) {
   });
 } else if (process.env.DB_DIALECT === 'mysql') {
   // Hostinger MySQL
-  sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+  sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT || 3306,
     dialect: 'mysql',
