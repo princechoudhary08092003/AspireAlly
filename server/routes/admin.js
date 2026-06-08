@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
-const { User, MentorProfile, Booking, Subscription, TimeSlot } = require('../models');
+const { User, MentorProfile, Booking, Subscription, TimeSlot, Advisor } = require('../models');
 const { auth, requireRole } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
@@ -148,6 +148,62 @@ router.get('/subscriptions', guard, async (req, res) => {
       order: [['createdAt', 'DESC']],
     });
     res.json(subs);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ── ADVISORS CRUD ─────────────────────────────────────────────────────────────
+
+// List all advisors
+router.get('/advisors', guard, async (req, res) => {
+  try {
+    const advisors = await Advisor.findAll({ order: [['sortOrder', 'ASC'], ['createdAt', 'ASC']] });
+    res.json(advisors);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Create advisor
+router.post('/advisors', guard, async (req, res) => {
+  try {
+    const { name, initials, role, company, location, bio, tags, followers, linkedinUrl, gradient, isActive, sortOrder } = req.body;
+    if (!name || !initials || !role) return res.status(400).json({ message: 'name, initials and role are required' });
+    const advisor = await Advisor.create({
+      name, initials, role, company, location, bio,
+      tags: tags || [],
+      followers, linkedinUrl,
+      gradient: gradient || 'linear-gradient(135deg,#2563EB,#1E3A8A)',
+      isActive: isActive !== false,
+      sortOrder: sortOrder || 0,
+    });
+    res.status(201).json(advisor);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Update advisor
+router.put('/advisors/:id', guard, async (req, res) => {
+  try {
+    const advisor = await Advisor.findByPk(req.params.id);
+    if (!advisor) return res.status(404).json({ message: 'Advisor not found' });
+    const { name, initials, role, company, location, bio, tags, followers, linkedinUrl, gradient, isActive, sortOrder } = req.body;
+    await advisor.update({ name, initials, role, company, location, bio, tags, followers, linkedinUrl, gradient, isActive, sortOrder });
+    res.json(advisor);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Delete advisor
+router.delete('/advisors/:id', guard, async (req, res) => {
+  try {
+    const advisor = await Advisor.findByPk(req.params.id);
+    if (!advisor) return res.status(404).json({ message: 'Advisor not found' });
+    await advisor.destroy();
+    res.json({ message: 'Advisor deleted' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

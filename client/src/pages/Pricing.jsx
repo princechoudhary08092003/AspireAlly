@@ -59,7 +59,7 @@ export default function Pricing() {
         key: data.keyId,
         amount: data.amount,
         currency: data.currency,
-        name: 'Aspire Ally',
+        name: 'Mentor Rise',
         description: `${plan.label} Subscription`,
         order_id: data.orderId,
         handler: async (response) => {

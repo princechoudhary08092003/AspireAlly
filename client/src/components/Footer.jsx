@@ -15,17 +15,17 @@ export default function Footer() {
           <div>
             <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
               <div style={{ width: 38, height: 38, borderRadius: 10, background: 'var(--grad-brand)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ color: '#fff', fontWeight: 900, fontSize: 16, letterSpacing: '-.02em' }}>AA</span>
+                <span style={{ color: '#fff', fontWeight: 900, fontSize: 16, letterSpacing: '-.02em' }}>MR</span>
               </div>
-              <span style={{ fontWeight: 800, fontSize: 18, color: '#fff', letterSpacing: '-.02em' }}>Aspire<span style={{ color: 'var(--gold-b)' }}>Ally</span></span>
+              <span style={{ fontWeight: 800, fontSize: 18, color: '#fff', letterSpacing: '-.02em' }}>Mentor<span style={{ color: 'var(--gold-b)' }}>Rise</span></span>
             </Link>
             <p style={{ fontSize: 14, lineHeight: 1.75, maxWidth: 280, marginBottom: 20 }}>
               Bridging the gap between ambitious professionals and seasoned industry leaders. Co-creating structured roadmaps for lasting success.
             </p>
-            <a href="mailto:hello@aspireally.in" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'rgba(255,255,255,.5)', transition: 'color .2s' }}
+            <a href="mailto:hello@mentorrise.in" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'rgba(255,255,255,.5)', transition: 'color .2s' }}
               onMouseEnter={e => e.currentTarget.style.color = '#fff'}
               onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,.5)'}>
-              <FiMail size={14} /> hello@aspireally.in
+              <FiMail size={14} /> hello@mentorrise.in
             </a>
           </div>
 
@@ -68,8 +68,6 @@ export default function Footer() {
               {[
                 ['https://www.linkedin.com/in/anjali-bahl-3393022b5', 'Anjali Bahl'],
                 ['https://www.linkedin.com/in/anil-bahl-63ba059', 'Anil Bahl'],
-                ['https://www.linkedin.com/in/alok-narain-8277371', 'Alok Narain (Advisor)'],
-                ['https://www.linkedin.com/in/chshetty', 'Chandrashekar Shetty (Advisor)'],
               ].map(([href, label]) => (
                 <li key={label}>
                   <a href={href} target="_blank" rel="noreferrer"
@@ -86,7 +84,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div style={{ borderTop: '1px solid rgba(255,255,255,.07)', paddingTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-          <p style={{ fontSize: 13 }}>© {year} Aspire Ally. All rights reserved.</p>
+          <p style={{ fontSize: 13 }}>© {year} Mentor Rise. All rights reserved.</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
             <span style={{ fontSize: 13 }}>Pave Your Way to Success</span>
             <Link to="/login"

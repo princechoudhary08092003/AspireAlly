@@ -27,9 +27,9 @@ export default function VerifyEmailSent() {
         {/* Logo */}
         <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 48, textDecoration: 'none' }}>
           <div style={{ width: 40, height: 40, borderRadius: 12, background: 'var(--grad-brand)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: '#fff', fontWeight: 900, fontSize: 18 }}>AA</span>
+            <span style={{ color: '#fff', fontWeight: 900, fontSize: 18 }}>MR</span>
           </div>
-          <span style={{ fontWeight: 800, fontSize: 20, color: 'var(--text)', letterSpacing: '-.02em' }}>Aspire<span style={{ color: 'var(--gold-b)' }}>Ally</span></span>
+          <span style={{ fontWeight: 800, fontSize: 20, color: 'var(--text)', letterSpacing: '-.02em' }}>Mentor<span style={{ color: 'var(--gold-b)' }}>Rise</span></span>
         </Link>
 
         {/* Card */}

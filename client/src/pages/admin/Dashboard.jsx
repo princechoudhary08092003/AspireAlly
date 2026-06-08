@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../utils/api'
-import { FiUsers, FiCalendar, FiCreditCard, FiAlertCircle } from 'react-icons/fi'
+import { FiUsers, FiCalendar, FiCreditCard, FiAlertCircle, FiStar } from 'react-icons/fi'
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null)
@@ -87,6 +87,9 @@ export default function AdminDashboard() {
               </Link>
               <Link to="/admin/subscriptions" className="btn btn-ghost" style={{ justifyContent: 'flex-start', gap: 10 }}>
                 <FiCreditCard size={15} /> Subscription Reports
+              </Link>
+              <Link to="/admin/advisors" className="btn btn-ghost" style={{ justifyContent: 'flex-start', gap: 10 }}>
+                <FiStar size={15} /> Manage Advisors
               </Link>
             </div>
           </div>

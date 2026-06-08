@@ -24,30 +24,6 @@ const TEAM = [
   },
 ]
 
-const ADVISORS = [
-  {
-    name: 'Alok Narain', initials: 'AN',
-    role: 'Leadership Coach & Trainer',
-    company: 'Enneagram & Emotional Intelligence Practitioner',
-    location: 'New Delhi, India',
-    bio: 'Certified Lumina Spark & Enneagram practitioner with 23K+ followers. Renowned for deep people skills, empathy-driven coaching, and building future-ready leaders.',
-    tags: ['Leadership', 'EI', 'Coaching'],
-    followers: '23K',
-    gradient: 'linear-gradient(135deg,#C9920B,#F59E0B)',
-    linkedin: 'https://www.linkedin.com/in/alok-narain-8277371',
-  },
-  {
-    name: 'Chandrashekar Shetty', initials: 'CS',
-    role: 'Senior Leader, BFSI',
-    company: 'Aditya Birla Sun Life Insurance',
-    location: 'Mumbai, India',
-    bio: '19+ years of leadership across Multinational Telecom & BFSI. IIM Kozhikode alumnus. Passionate about digital strategy, career development, and leadership excellence.',
-    tags: ['BFSI', 'Strategy', 'Digital'],
-    followers: '8K',
-    gradient: 'linear-gradient(135deg,#2563EB,#1E3A8A)',
-    linkedin: 'https://www.linkedin.com/in/chshetty',
-  },
-]
 
 const STEPS = [
   { num: '01', icon: <FiBook />, title: 'Onboarding Masterclass', desc: 'Understand the full scope of the programme. Set expectations and chart your starting point.' },
@@ -98,14 +74,14 @@ const MENTOR_REASONS = [
   {
     icon: <FiTrendingUp size={22} />,
     title: 'Create Measurable Impact',
-    desc: "One honest conversation can redirect a career. As a mentor on Aspire Ally, you'll guide structured sessions — not just advise, but co-create real action plans that produce results.",
+    desc: "One honest conversation can redirect a career. As a mentor on Mentor Rise, you'll guide structured sessions — not just advise, but co-create real action plans that produce results.",
     color: '#059669',
     bg: '#f0fdf4',
   },
   {
     icon: <FiAward size={22} />,
     title: 'Build a Legacy of Excellence',
-    desc: "Your career achievements become a blueprint others can follow. Aspire Ally lets you formalise your expertise into a structured programme that outlasts any single session.",
+    desc: "Your career achievements become a blueprint others can follow. Mentor Rise lets you formalise your expertise into a structured programme that outlasts any single session.",
     color: '#7C3AED',
     bg: '#f5f3ff',
   },
@@ -124,7 +100,7 @@ const TESTIMONIALS = [
     name: 'Priya Sharma',
     role: 'Marketing Manager → Head of Brand',
     company: 'Fintech Startup, Bengaluru',
-    quote: "I had been stuck at the same designation for three years, unsure of what was holding me back. My Aspire Ally mentor helped me see exactly where my gaps were and how to fill them. Within six months I was heading a brand team.",
+    quote: "I had been stuck at the same designation for three years, unsure of what was holding me back. My Mentor Rise mentor helped me see exactly where my gaps were and how to fill them. Within six months I was heading a brand team.",
     rating: 5,
     initials: 'PS',
     gradient: 'linear-gradient(135deg,#2563EB,#1D4ED8)',
@@ -154,7 +130,7 @@ const TESTIMONIALS = [
     name: 'Rohan Dsouza',
     role: 'Sales Executive → Business Development Lead',
     company: 'FMCG Enterprise, Mumbai',
-    quote: "What sets Aspire Ally apart is the structure. It's not just a chat — there's a clear framework, clear outcomes. My mentor held me accountable, reviewed my progress, and pushed me when I needed it.",
+    quote: "What sets Mentor Rise apart is the structure. It's not just a chat — there's a clear framework, clear outcomes. My mentor held me accountable, reviewed my progress, and pushed me when I needed it.",
     rating: 5,
     initials: 'RD',
     gradient: 'linear-gradient(135deg,#059669,#047857)',
@@ -165,8 +141,8 @@ const TESTIMONIALS = [
 /* ── FAQS DATA ─────────────────────────────────── */
 const FAQS = [
   {
-    q: 'Who is the Aspire Ally programme designed for?',
-    a: 'Aspire Ally is built for working professionals, MBA graduates, and career switchers who want structured, personalised guidance — not generic advice. Whether you are two years into your career or ten, if you are serious about growth, this is for you.',
+    q: 'Who is the Mentor Rise programme designed for?',
+    a: 'Mentor Rise is built for working professionals, MBA graduates, and career switchers who want structured, personalised guidance — not generic advice. Whether you are two years into your career or ten, if you are serious about growth, this is for you.',
   },
   {
     q: 'How does mentor matching work?',
@@ -185,16 +161,16 @@ const FAQS = [
     a: 'Absolutely. With an active subscription you can book sessions with any approved mentor on the platform. Many mentees work with two or three mentors across different functional areas.',
   },
   {
-    q: 'How do I become a mentor on Aspire Ally?',
+    q: 'How do I become a mentor on Mentor Rise?',
     a: 'Register as a mentor, complete your profile, and submit for review. Our admin team personally reviews each application to ensure quality. Once approved, you set your own availability and begin accepting bookings.',
   },
   {
-    q: 'What makes Aspire Ally different from LinkedIn networking?',
-    a: 'LinkedIn gets you a connection; Aspire Ally gets you a structured relationship with accountability. Every interaction follows a defined framework — onboarding, STAR goal-setting, sessions, and an action roadmap — designed to produce measurable career outcomes.',
+    q: 'What makes Mentor Rise different from LinkedIn networking?',
+    a: 'LinkedIn gets you a connection; Mentor Rise gets you a structured relationship with accountability. Every interaction follows a defined framework — onboarding, STAR goal-setting, sessions, and an action roadmap — designed to produce measurable career outcomes.',
   },
   {
     q: 'Is my session information kept confidential?',
-    a: 'Yes. Notes, goals, and session details are only visible to you and your mentor. Aspire Ally does not share individual session content with third parties.',
+    a: 'Yes. Notes, goals, and session details are only visible to you and your mentor. Mentor Rise does not share individual session content with third parties.',
   },
 ]
 
@@ -381,10 +357,14 @@ function PersonCard({ person, type }) {
 export default function Home() {
   const { user } = useAuth()
   const [mentors, setMentors] = useState([])
+  const [advisors, setAdvisors] = useState([])
   const [adminModal, setAdminModal] = useState(false)
   const scrollRef = useRef(null)
 
-  useEffect(() => { api.get('/mentors').then(r => setMentors(r.data.slice(0, 6))).catch(() => {}) }, [])
+  useEffect(() => {
+    api.get('/mentors').then(r => setMentors(r.data.slice(0, 6))).catch(() => {})
+    api.get('/advisors').then(r => setAdvisors(r.data)).catch(() => {})
+  }, [])
 
   // horizontal scroll drag
   useEffect(() => {
@@ -549,7 +529,7 @@ export default function Home() {
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: 56 }}>
             <div className="section-label section-label-blue" style={{ margin: '0 auto 16px' }}>The Team</div>
-            <h2 className="h1">The Founders Behind <span className="text-gradient">Aspire Ally</span></h2>
+            <h2 className="h1">The Founders Behind <span className="text-gradient">Mentor Rise</span></h2>
             <p className="lead" style={{ maxWidth: 460, margin: '16px auto 0' }}>
               Visionaries committed to bridging the gap between ambition and achievement.
             </p>
@@ -561,20 +541,29 @@ export default function Home() {
       </section>
 
       {/* ── ADVISORS ── */}
-      <section className="section" style={{ background: 'linear-gradient(180deg,var(--bg) 0%,var(--bg-2) 100%)' }}>
-        <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: 56 }}>
-            <div className="section-label section-label-gold" style={{ margin: '0 auto 16px' }}>Advisors</div>
-            <h2 className="h1">Guided by <span className="text-gold">Senior Industry Leaders</span></h2>
-            <p className="lead" style={{ maxWidth: 500, margin: '16px auto 0' }}>
-              Our advisors bring decades of cross-industry experience to guide the programme's direction and quality.
-            </p>
+      {advisors.length > 0 && (
+        <section className="section" style={{ background: 'linear-gradient(180deg,var(--bg) 0%,var(--bg-2) 100%)' }}>
+          <div className="container">
+            <div style={{ textAlign: 'center', marginBottom: 56 }}>
+              <div className="section-label section-label-gold" style={{ margin: '0 auto 16px' }}>Advisors</div>
+              <h2 className="h1">Guided by <span className="text-gold">Senior Industry Leaders</span></h2>
+              <p className="lead" style={{ maxWidth: 500, margin: '16px auto 0' }}>
+                Our advisors bring decades of cross-industry experience to guide the programme's direction and quality.
+              </p>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 28, maxWidth: 800, margin: '0 auto' }}>
+              {advisors.map(a => (
+                <PersonCard key={a.id} type="advisor" person={{
+                  name: a.name, initials: a.initials, role: a.role,
+                  company: a.company, location: a.location, bio: a.bio,
+                  tags: a.tags, followers: a.followers,
+                  gradient: a.gradient, linkedin: a.linkedinUrl,
+                }} />
+              ))}
+            </div>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 28, maxWidth: 800, margin: '0 auto' }}>
-            {ADVISORS.map(p => <PersonCard key={p.name} person={p} type="advisor" />)}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── WHY BECOME A MENTOR ── */}
       <section className="section" style={{ background: 'var(--navy)' }}>
@@ -694,7 +683,7 @@ export default function Home() {
               <p style={{ color: 'var(--text-3)', fontSize: 15, lineHeight: 1.75, marginBottom: 32 }}>
                 Got a question that's not answered here? We're just a message away.
               </p>
-              <a href="mailto:hello@aspireally.in" className="btn btn-outline btn-pill" style={{ gap: 8 }}>
+              <a href="mailto:hello@mentorrise.in" className="btn btn-outline btn-pill" style={{ gap: 8 }}>
                 <FiMail size={14} /> Ask Us Directly
               </a>
             </div>
@@ -717,7 +706,7 @@ export default function Home() {
             <span style={{ background: 'var(--grad-gold)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Pave Your Way to Success.</span>
           </h2>
           <p style={{ color: 'rgba(255,255,255,.6)', fontSize: 17, marginBottom: 40, maxWidth: 480, margin: '16px auto 40px' }}>
-            Join hundreds of professionals who've charted their path with Aspire Ally.
+            Join hundreds of professionals who've charted their path with Mentor Rise.
           </p>
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link to="/register" className="btn btn-gold btn-xl btn-pill">Get Started Free <FiArrowRight /></Link>

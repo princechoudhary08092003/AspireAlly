@@ -63,13 +63,13 @@ export default function Navbar() {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               boxShadow: '0 4px 12px rgba(37,99,235,.3)',
             }}>
-              <span style={{ color: '#fff', fontWeight: 900, fontSize: 18, letterSpacing: '-.02em' }}>AA</span>
+              <span style={{ color: '#fff', fontWeight: 900, fontSize: 18, letterSpacing: '-.02em' }}>MR</span>
             </div>
             <span style={{
               fontWeight: 800, fontSize: 18, letterSpacing: '-.02em',
               color: isDark ? '#fff' : 'var(--text)',
               transition: 'color .3s',
-            }}>Aspire<span style={{ color: 'var(--gold-b)' }}>Ally</span></span>
+            }}>Mentor<span style={{ color: 'var(--gold-b)' }}>Rise</span></span>
           </Link>
 
           {/* Desktop links */}

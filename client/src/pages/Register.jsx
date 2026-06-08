@@ -30,7 +30,7 @@ export default function Register() {
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       const user = await loginWithGoogle(credentialResponse.credential)
-      toast.success(`Welcome to Aspire Ally, ${user.firstName}!`)
+      toast.success(`Welcome to Mentor Rise, ${user.firstName}!`)
       navigate(user.role === 'mentor' ? '/mentor/dashboard' : '/mentee/dashboard')
     } catch (err) {
       setError(err.response?.data?.message || 'Google sign-in failed')
@@ -46,9 +46,9 @@ export default function Register() {
 
         <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, position: 'relative', zIndex: 1 }}>
           <div style={{ width: 40, height: 40, borderRadius: 12, background: 'var(--grad-brand)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: '#fff', fontWeight: 900, fontSize: 18 }}>AA</span>
+            <span style={{ color: '#fff', fontWeight: 900, fontSize: 18 }}>MR</span>
           </div>
-          <span style={{ fontWeight: 800, fontSize: 20, color: '#fff', letterSpacing: '-.02em' }}>Aspire<span style={{ color: 'var(--gold-b)' }}>Ally</span></span>
+          <span style={{ fontWeight: 800, fontSize: 20, color: '#fff', letterSpacing: '-.02em' }}>Mentor<span style={{ color: 'var(--gold-b)' }}>Rise</span></span>
         </Link>
 
         <div style={{ marginTop: 'auto', marginBottom: 'auto', position: 'relative', zIndex: 1 }}>
@@ -70,7 +70,7 @@ export default function Register() {
             </div>
           ))}
         </div>
-        <p style={{ fontSize: 12, color: 'rgba(255,255,255,.25)', position: 'relative', zIndex: 1 }}>© 2025 AspireAlly</p>
+        <p style={{ fontSize: 12, color: 'rgba(255,255,255,.25)', position: 'relative', zIndex: 1 }}>© 2025 MentorRise</p>
       </div>
 
       {/* Right panel */}
@@ -79,9 +79,9 @@ export default function Register() {
           <div className="hide-lg" style={{ marginBottom: 28, textAlign: 'center' }}>
             <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
               <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--grad-brand)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ color: '#fff', fontWeight: 900, fontSize: 16 }}>AA</span>
+                <span style={{ color: '#fff', fontWeight: 900, fontSize: 16 }}>MR</span>
               </div>
-              <span style={{ fontWeight: 800, fontSize: 18, letterSpacing: '-.02em' }}>Aspire<span style={{ color: 'var(--gold-b)' }}>Ally</span></span>
+              <span style={{ fontWeight: 800, fontSize: 18, letterSpacing: '-.02em' }}>Mentor<span style={{ color: 'var(--gold-b)' }}>Rise</span></span>
             </Link>
           </div>
 

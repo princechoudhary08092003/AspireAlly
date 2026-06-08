@@ -25,7 +25,7 @@ export default function VerifyEmail() {
         localStorage.setItem('mp_token', data.token)
         localStorage.setItem('mp_user', JSON.stringify(data.user))
         setStatus('success')
-        toast.success('Email verified! Welcome to AspireAlly 🎉')
+        toast.success('Email verified! Welcome to Mentor Rise 🎉')
         setTimeout(() => {
           const role = data.user.role
           navigate(role === 'mentor' ? '/mentor/dashboard' : role === 'admin' ? '/admin' : '/mentee/dashboard')
@@ -43,9 +43,9 @@ export default function VerifyEmail() {
         {/* Logo */}
         <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 48, textDecoration: 'none' }}>
           <div style={{ width: 40, height: 40, borderRadius: 12, background: 'var(--grad-brand)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: '#fff', fontWeight: 900, fontSize: 18 }}>AA</span>
+            <span style={{ color: '#fff', fontWeight: 900, fontSize: 18 }}>MR</span>
           </div>
-          <span style={{ fontWeight: 800, fontSize: 20, color: 'var(--text)', letterSpacing: '-.02em' }}>Aspire<span style={{ color: 'var(--gold-b)' }}>Ally</span></span>
+          <span style={{ fontWeight: 800, fontSize: 20, color: 'var(--text)', letterSpacing: '-.02em' }}>Mentor<span style={{ color: 'var(--gold-b)' }}>Rise</span></span>
         </Link>
 
         <div style={{ background: '#fff', borderRadius: 20, padding: '48px 40px', boxShadow: 'var(--sh)', border: '1px solid var(--border)' }}>

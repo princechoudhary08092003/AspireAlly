@@ -67,9 +67,9 @@ export default function Login() {
 
         <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, position: 'relative', zIndex: 1 }}>
           <div style={{ width: 40, height: 40, borderRadius: 12, background: 'var(--grad-brand)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(37,99,235,.4)' }}>
-            <span style={{ color: '#fff', fontWeight: 900, fontSize: 18 }}>AA</span>
+            <span style={{ color: '#fff', fontWeight: 900, fontSize: 18 }}>MR</span>
           </div>
-          <span style={{ fontWeight: 800, fontSize: 20, color: '#fff', letterSpacing: '-.02em' }}>Aspire<span style={{ color: 'var(--gold-b)' }}>Ally</span></span>
+          <span style={{ fontWeight: 800, fontSize: 20, color: '#fff', letterSpacing: '-.02em' }}>Mentor<span style={{ color: 'var(--gold-b)' }}>Rise</span></span>
         </Link>
 
         <div style={{ marginTop: 'auto', marginBottom: 'auto', position: 'relative', zIndex: 1 }}>
@@ -91,7 +91,7 @@ export default function Login() {
           </div>
         </div>
 
-        <p style={{ fontSize: 12, color: 'rgba(255,255,255,.25)', position: 'relative', zIndex: 1 }}>© 2025 AspireAlly</p>
+        <p style={{ fontSize: 12, color: 'rgba(255,255,255,.25)', position: 'relative', zIndex: 1 }}>© 2025 MentorRise</p>
       </div>
 
       {/* Right panel */}
@@ -101,9 +101,9 @@ export default function Login() {
           <div className="hide-lg" style={{ marginBottom: 32, textAlign: 'center' }}>
             <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
               <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--grad-brand)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ color: '#fff', fontWeight: 900, fontSize: 16 }}>AA</span>
+                <span style={{ color: '#fff', fontWeight: 900, fontSize: 16 }}>MR</span>
               </div>
-              <span style={{ fontWeight: 800, fontSize: 18, color: 'var(--text)', letterSpacing: '-.02em' }}>Aspire<span style={{ color: 'var(--gold-b)' }}>Ally</span></span>
+              <span style={{ fontWeight: 800, fontSize: 18, color: 'var(--text)', letterSpacing: '-.02em' }}>Mentor<span style={{ color: 'var(--gold-b)' }}>Rise</span></span>
             </Link>
           </div>
 
@@ -111,7 +111,7 @@ export default function Login() {
             <h1 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8, letterSpacing: '-.02em' }}>Sign in</h1>
             <p style={{ color: 'var(--text-3)', fontSize: 14 }}>
               Don't have an account?{' '}
-              <Link to="/register" style={{ color: 'var(--primary)', fontWeight: 600 }}>Join Aspire Ally →</Link>
+              <Link to="/register" style={{ color: 'var(--primary)', fontWeight: 600 }}>Join Mentor Rise →</Link>
             </p>
           </div>
 

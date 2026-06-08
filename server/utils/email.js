@@ -23,7 +23,7 @@ if (process.env.SMTP_HOST) {
   }
 }
 
-const FROM = process.env.FROM_EMAIL || '"AspireAlly" <noreply@aspireally.in>'
+const FROM = process.env.FROM_EMAIL || '"MentorRise" <noreply@mentorrise.in>'
 
 async function sendVerificationEmail(to, firstName, token, clientUrl) {
   const base = clientUrl || process.env.CLIENT_URL || 'http://localhost:5173'
@@ -38,9 +38,9 @@ async function sendVerificationEmail(to, firstName, token, clientUrl) {
         <tr>
           <td style="background:linear-gradient(135deg,#080E1D,#1E3A8A);padding:32px 40px;text-align:center;">
             <div style="display:inline-block;background:linear-gradient(135deg,#2563EB,#881337);border-radius:12px;padding:8px 18px;margin-bottom:14px;">
-              <span style="color:#fff;font-weight:900;font-size:22px;letter-spacing:-.5px;">AA</span>
+              <span style="color:#fff;font-weight:900;font-size:22px;letter-spacing:-.5px;">MR</span>
             </div>
-            <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:800;letter-spacing:-.5px;">Aspire<span style="color:#F59E0B;">Ally</span></h1>
+            <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:800;letter-spacing:-.5px;">Mentor<span style="color:#F59E0B;">Rise</span></h1>
           </td>
         </tr>
         <tr>
@@ -64,7 +64,7 @@ async function sendVerificationEmail(to, firstName, token, clientUrl) {
         </tr>
         <tr>
           <td style="background:#F8FAFF;padding:20px 40px;text-align:center;">
-            <p style="margin:0;color:#CBD5E1;font-size:11px;">© 2025 AspireAlly · Empowering careers through mentorship</p>
+            <p style="margin:0;color:#CBD5E1;font-size:11px;">© 2025 MentorRise · Empowering careers through mentorship</p>
           </td>
         </tr>
       </table>
@@ -76,8 +76,8 @@ async function sendVerificationEmail(to, firstName, token, clientUrl) {
   await transporter.sendMail({
     from: FROM,
     to,
-    subject: 'Verify your AspireAlly account',
-    text: `Hi ${firstName},\n\nVerify your email address by visiting:\n${link}\n\nThis link expires in 24 hours.\n\n– The AspireAlly Team`,
+    subject: 'Verify your MentorRise account',
+    text: `Hi ${firstName},\n\nVerify your email address by visiting:\n${link}\n\nThis link expires in 24 hours.\n\n– The MentorRise Team`,
     html,
   })
 }
