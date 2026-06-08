@@ -6,6 +6,8 @@ import toast from 'react-hot-toast'
 import { FiMail, FiLock, FiArrowRight } from 'react-icons/fi'
 import api from '../utils/api'
 
+const GOOGLE_ENABLED = !!import.meta.env.VITE_GOOGLE_CLIENT_ID
+
 export default function Login() {
   const { login, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
@@ -150,23 +152,25 @@ export default function Login() {
             </button>
           </form>
 
-          {/* Divider */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0' }}>
-            <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
-            <span style={{ fontSize: 12, color: 'var(--text-4)', whiteSpace: 'nowrap' }}>or continue with</span>
-            <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
-          </div>
-
-          {/* Google Sign-In */}
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={() => setError('Google sign-in failed. Please try again.')}
-              text="signin_with"
-              shape="pill"
-              width="360"
-            />
-          </div>
+          {/* Google Sign-In — only shown when Google OAuth is configured */}
+          {GOOGLE_ENABLED && (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0' }}>
+                <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+                <span style={{ fontSize: 12, color: 'var(--text-4)', whiteSpace: 'nowrap' }}>or continue with</span>
+                <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={() => setError('Google sign-in failed. Please try again.')}
+                  text="signin_with"
+                  shape="pill"
+                  width="360"
+                />
+              </div>
+            </>
+          )}
 
           <div style={{ marginTop: 24, textAlign: 'center' }}>
             <p style={{ fontSize: 12, color: 'var(--text-4)' }}>Secure, encrypted login</p>

@@ -5,6 +5,8 @@ import { GoogleLogin } from '@react-oauth/google'
 import toast from 'react-hot-toast'
 import { FiArrowRight, FiUser, FiMail, FiLock } from 'react-icons/fi'
 
+const GOOGLE_ENABLED = !!import.meta.env.VITE_GOOGLE_CLIENT_ID
+
 export default function Register() {
   const { register, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
@@ -138,23 +140,25 @@ export default function Register() {
             </button>
           </form>
 
-          {/* Divider */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0' }}>
-            <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
-            <span style={{ fontSize: 12, color: 'var(--text-4)', whiteSpace: 'nowrap' }}>or continue with</span>
-            <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
-          </div>
-
-          {/* Google Sign-In */}
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={() => setError('Google sign-in failed. Please try again.')}
-              text="signup_with"
-              shape="pill"
-              width="360"
-            />
-          </div>
+          {/* Google Sign-In — only shown when Google OAuth is configured */}
+          {GOOGLE_ENABLED && (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0' }}>
+                <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+                <span style={{ fontSize: 12, color: 'var(--text-4)', whiteSpace: 'nowrap' }}>or continue with</span>
+                <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={() => setError('Google sign-in failed. Please try again.')}
+                  text="signup_with"
+                  shape="pill"
+                  width="360"
+                />
+              </div>
+            </>
+          )}
 
           <p style={{ fontSize: 12, color: 'var(--text-4)', textAlign: 'center', lineHeight: 1.6, marginTop: 16 }}>
             By joining you agree to our Terms of Service and Privacy Policy
