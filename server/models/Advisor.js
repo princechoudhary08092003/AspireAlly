@@ -9,7 +9,19 @@ const Advisor = sequelize.define('Advisor', {
   company: { type: DataTypes.STRING, allowNull: true },
   location: { type: DataTypes.STRING, allowNull: true },
   bio: { type: DataTypes.TEXT, allowNull: true },
-  tags: { type: DataTypes.JSON, allowNull: true, defaultValue: [] },
+  tags: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+    defaultValue: '[]',
+    get() {
+      const val = this.getDataValue('tags');
+      if (!val) return [];
+      try { return typeof val === 'string' ? JSON.parse(val) : val; } catch { return []; }
+    },
+    set(val) {
+      this.setDataValue('tags', Array.isArray(val) ? JSON.stringify(val) : val);
+    },
+  },
   followers: { type: DataTypes.STRING, allowNull: true },
   linkedinUrl: { type: DataTypes.STRING, allowNull: true },
   gradient: { type: DataTypes.STRING, allowNull: true, defaultValue: 'linear-gradient(135deg,#2563EB,#1E3A8A)' },

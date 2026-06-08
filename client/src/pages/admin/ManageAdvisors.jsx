@@ -133,7 +133,7 @@ export default function ManageAdvisors() {
                     </div>
                     {a.bio && <p style={{ fontSize: 12, color: 'var(--text-2)', lineHeight: 1.6, marginTop: 10 }}>{a.bio.length > 100 ? a.bio.slice(0, 100) + '…' : a.bio}</p>}
                     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 10 }}>
-                      {(a.tags || []).map(t => <span key={t} className="chip chip-gray" style={{ fontSize: 10 }}>{t}</span>)}
+                      {(Array.isArray(a.tags) ? a.tags : []).map(t => <span key={t} className="chip chip-gray" style={{ fontSize: 10 }}>{t}</span>)}
                       {!a.isActive && <span className="badge badge-gray" style={{ fontSize: 10 }}>Hidden</span>}
                       {a.followers && <span style={{ fontSize: 11, color: 'var(--text-3)' }}>{a.followers}+ followers</span>}
                     </div>

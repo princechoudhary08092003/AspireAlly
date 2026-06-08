@@ -556,7 +556,8 @@ export default function Home() {
                 <PersonCard key={a.id} type="advisor" person={{
                   name: a.name, initials: a.initials, role: a.role,
                   company: a.company, location: a.location, bio: a.bio,
-                  tags: a.tags, followers: a.followers,
+                  tags: Array.isArray(a.tags) ? a.tags : (typeof a.tags === 'string' ? JSON.parse(a.tags || '[]') : []),
+                  followers: a.followers,
                   gradient: a.gradient, linkedin: a.linkedinUrl,
                 }} />
               ))}
