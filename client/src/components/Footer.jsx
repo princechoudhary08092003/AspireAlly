@@ -66,8 +66,8 @@ export default function Footer() {
             <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,.35)', marginBottom: 16 }}>Team</p>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
               {[
-                ['https://www.linkedin.com/in/anjali-bahl-3393022b5', 'Anjali Bahl'],
-                ['https://www.linkedin.com/in/anil-bahl-63ba059', 'Anil Bahl'],
+                ['#', 'Co-Founder'],
+                ['#', 'Co-Founder'],
               ].map(([href, label]) => (
                 <li key={label}>
                   <a href={href} target="_blank" rel="noreferrer"

@@ -13,14 +13,14 @@ import {
 /* ── DATA ──────────────────────────────────────── */
 const TEAM = [
   {
-    name: 'Anjali Bahl', role: 'Co-Founder', initials: 'AB',
+    name: 'Co-Founder Name', role: 'Co-Founder', initials: 'CF',
     gradient: 'linear-gradient(135deg,#2563EB,#1D4ED8)',
-    linkedin: 'https://www.linkedin.com/in/anjali-bahl-3393022b5',
+    linkedin: '#',
   },
   {
-    name: 'Anil Bahl', role: 'Co-Founder', initials: 'AB',
+    name: 'Co-Founder Name', role: 'Co-Founder', initials: 'CF',
     gradient: 'linear-gradient(135deg,#881337,#5C0D26)',
-    linkedin: 'https://www.linkedin.com/in/anil-bahl-63ba059',
+    linkedin: '#',
   },
 ]
 
