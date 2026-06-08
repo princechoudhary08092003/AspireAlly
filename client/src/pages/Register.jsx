@@ -31,7 +31,7 @@ export default function Register() {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const user = await loginWithGoogle(credentialResponse.credential)
+      const user = await loginWithGoogle(credentialResponse.credential, form.role)
       toast.success(`Welcome to Mentor Rise, ${user.firstName}!`)
       navigate(user.role === 'mentor' ? '/mentor/dashboard' : '/mentee/dashboard')
     } catch (err) {

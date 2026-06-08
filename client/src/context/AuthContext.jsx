@@ -33,8 +33,8 @@ export const AuthProvider = ({ children }) => {
     return data
   }
 
-  const loginWithGoogle = async (idToken) => {
-    const { data } = await api.post('/auth/google', { idToken })
+  const loginWithGoogle = async (idToken, role) => {
+    const { data } = await api.post('/auth/google', { idToken, role })
     localStorage.setItem('mp_token', data.token)
     localStorage.setItem('mp_user', JSON.stringify(data.user))
     setUser(data.user)
@@ -45,7 +45,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('mp_token')
     localStorage.removeItem('mp_user')
     setUser(null)
-    window.location.href = '/'
   }
 
   const refreshUser = async () => {

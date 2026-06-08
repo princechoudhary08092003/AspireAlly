@@ -142,7 +142,7 @@ router.post('/login', async (req, res) => {
 // ── Google OAuth ──────────────────────────────────────────────────────────────
 router.post('/google', async (req, res) => {
   try {
-    const { idToken } = req.body;
+    const { idToken, role } = req.body;
     if (!idToken) return res.status(400).json({ message: 'ID token required' });
 
     if (!process.env.GOOGLE_CLIENT_ID) {
@@ -159,15 +159,17 @@ router.post('/google', async (req, res) => {
     let user = await User.findOne({ where: { email } });
 
     if (!user) {
+      const newRole = ['mentor', 'mentee'].includes(role) ? role : 'mentee';
       user = await User.create({
         email,
         firstName: firstName || email.split('@')[0],
         lastName: lastName || '',
         googleId,
-        role: 'mentee',
+        role: newRole,
         isEmailVerified: true,
         isActive: true,
       });
+      if (newRole === 'mentor') await MentorProfile.create({ userId: user.id });
     } else {
       // Link Google ID if not already set
       if (!user.googleId) await user.update({ googleId, isEmailVerified: true });

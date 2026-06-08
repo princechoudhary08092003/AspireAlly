@@ -5,6 +5,7 @@ import { AuthProvider } from './context/AuthContext'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
+import ErrorBoundary from './components/ErrorBoundary'
 
 // Public pages
 import Home from './pages/Home'
@@ -51,6 +52,7 @@ const MaybeGoogleProvider = ({ children }) =>
 
 export default function App() {
   return (
+    <ErrorBoundary>
     <MaybeGoogleProvider>
       <BrowserRouter>
         <AuthProvider>
@@ -102,5 +104,6 @@ export default function App() {
         </AuthProvider>
       </BrowserRouter>
     </MaybeGoogleProvider>
+    </ErrorBoundary>
   )
 }

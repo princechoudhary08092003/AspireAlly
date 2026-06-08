@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import {
   FiMenu, FiX, FiLogOut, FiGrid, FiChevronDown,
@@ -9,6 +9,7 @@ import {
 export default function Navbar() {
   const { user, logout } = useAuth()
   const { pathname } = useLocation()
+  const navigate = useNavigate()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [dropOpen, setDropOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -133,7 +134,7 @@ export default function Navbar() {
                       </Link>
                     ))}
                     <div style={{ height: 1, background: 'var(--border)' }} />
-                    <button onClick={() => { setDropOpen(false); logout() }}
+                    <button onClick={() => { setDropOpen(false); logout(); navigate('/') }}
                       style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 16px', fontSize: 14, color: 'var(--error)', width: '100%', background: 'none', border: 'none', cursor: 'pointer', transition: 'background .15s', textAlign: 'left' }}
                       onMouseEnter={e => e.currentTarget.style.background = 'var(--error-l)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
@@ -189,7 +190,7 @@ export default function Navbar() {
             {user && (
               <div style={{ marginTop: 8 }}>
                 <Link to={dashPath} className="btn btn-primary btn-full" style={{ marginBottom: 8 }}>Dashboard</Link>
-                <button onClick={logout} className="btn btn-ghost btn-full" style={{ color: 'var(--error)' }}>Sign Out</button>
+                <button onClick={() => { logout(); navigate('/') }} className="btn btn-ghost btn-full" style={{ color: 'var(--error)' }}>Sign Out</button>
               </div>
             )}
           </div>
