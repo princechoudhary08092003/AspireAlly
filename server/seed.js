@@ -65,7 +65,7 @@ const seedAll = async () => {
         title: 'Senior Software Engineer',
         company: 'MentorRise Demo',
         bio: 'Demo mentor account for testing the platform. Available to guide mentees on technology, career growth, and leadership.',
-        expertise: JSON.stringify(['Technology', 'Career Growth', 'Leadership']),
+        expertise: ['Technology', 'Career Growth', 'Leadership'],
       },
       { where: { userId: demoMentor.id } }
     );
