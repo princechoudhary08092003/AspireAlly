@@ -20,6 +20,7 @@ app.use('/api/bookings', require('./routes/bookings'));
 app.use('/api/payment', require('./routes/payment'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/advisors', require('./routes/advisors'));
+app.use('/api/cofounders', require('./routes/cofounders'));
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', env: process.env.NODE_ENV }));
 

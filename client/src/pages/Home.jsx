@@ -11,20 +11,6 @@ import {
 } from 'react-icons/fi'
 
 /* ── DATA ──────────────────────────────────────── */
-const TEAM = [
-  {
-    name: 'Co-Founder Name', role: 'Co-Founder', initials: 'CF',
-    gradient: 'linear-gradient(135deg,#2563EB,#1D4ED8)',
-    linkedin: '#',
-  },
-  {
-    name: 'Co-Founder Name', role: 'Co-Founder', initials: 'CF',
-    gradient: 'linear-gradient(135deg,#881337,#5C0D26)',
-    linkedin: '#',
-  },
-]
-
-
 const STEPS = [
   { num: '01', icon: <FiBook />, title: 'Onboarding Masterclass', desc: 'Understand the full scope of the programme. Set expectations and chart your starting point.' },
   { num: '02', icon: <FiTarget />, title: 'Smart Goals (STAR)', desc: 'Define measurable, ambitious goals using the STAR framework with your dedicated mentor.' },
@@ -358,12 +344,14 @@ export default function Home() {
   const { user } = useAuth()
   const [mentors, setMentors] = useState([])
   const [advisors, setAdvisors] = useState([])
+  const [cofounders, setCofounders] = useState([])
   const [adminModal, setAdminModal] = useState(false)
   const scrollRef = useRef(null)
 
   useEffect(() => {
     api.get('/mentors').then(r => setMentors(r.data.slice(0, 6))).catch(() => {})
     api.get('/advisors').then(r => setAdvisors(r.data)).catch(() => {})
+    api.get('/cofounders').then(r => setCofounders(r.data)).catch(() => {})
   }, [])
 
   // horizontal scroll drag
@@ -525,20 +513,27 @@ export default function Home() {
       )}
 
       {/* ── TEAM ── */}
-      <section className="section" style={{ background: '#fff' }}>
-        <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: 56 }}>
-            <div className="section-label section-label-blue" style={{ margin: '0 auto 16px' }}>The Team</div>
-            <h2 className="h1">The Founders Behind <span className="text-gradient">Mentor Rise</span></h2>
-            <p className="lead" style={{ maxWidth: 460, margin: '16px auto 0' }}>
-              Visionaries committed to bridging the gap between ambition and achievement.
-            </p>
+      {cofounders.length > 0 && (
+        <section className="section" style={{ background: '#fff' }}>
+          <div className="container">
+            <div style={{ textAlign: 'center', marginBottom: 56 }}>
+              <div className="section-label section-label-blue" style={{ margin: '0 auto 16px' }}>The Team</div>
+              <h2 className="h1">The Founders Behind <span className="text-gradient">Mentor Rise</span></h2>
+              <p className="lead" style={{ maxWidth: 460, margin: '16px auto 0' }}>
+                Visionaries committed to bridging the gap between ambition and achievement.
+              </p>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 28, maxWidth: 680, margin: '0 auto' }}>
+              {cofounders.map(c => (
+                <PersonCard key={c.id} type="team" person={{
+                  name: c.name, initials: c.initials, role: c.role,
+                  bio: c.bio, gradient: c.gradient, linkedin: c.linkedinUrl,
+                }} />
+              ))}
+            </div>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 28, maxWidth: 680, margin: '0 auto' }}>
-            {TEAM.map(p => <PersonCard key={p.name} person={p} type="team" />)}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── ADVISORS ── */}
       {advisors.length > 0 && (

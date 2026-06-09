@@ -32,6 +32,7 @@ import ManageMentees from './pages/admin/ManageMentees'
 import ManageBookings from './pages/admin/ManageBookings'
 import AdminSubscriptions from './pages/admin/Subscriptions'
 import ManageAdvisors from './pages/admin/ManageAdvisors'
+import ManageCofounders from './pages/admin/ManageCofounders'
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
 
@@ -97,6 +98,7 @@ export default function App() {
             <Route path="/admin/bookings" element={<ProtectedRoute roles={['admin']}><WithNav><ManageBookings /></WithNav></ProtectedRoute>} />
             <Route path="/admin/subscriptions" element={<ProtectedRoute roles={['admin']}><WithNav><AdminSubscriptions /></WithNav></ProtectedRoute>} />
             <Route path="/admin/advisors" element={<ProtectedRoute roles={['admin']}><WithNav><ManageAdvisors /></WithNav></ProtectedRoute>} />
+            <Route path="/admin/cofounders" element={<ProtectedRoute roles={['admin']}><WithNav><ManageCofounders /></WithNav></ProtectedRoute>} />
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />

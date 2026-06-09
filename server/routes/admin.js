@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
-const { User, MentorProfile, Booking, Subscription, TimeSlot, Advisor } = require('../models');
+const { User, MentorProfile, Booking, Subscription, TimeSlot, Advisor, Cofounder } = require('../models');
 const { auth, requireRole } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
@@ -222,6 +222,60 @@ router.delete('/advisors/:id', guard, async (req, res) => {
     if (!advisor) return res.status(404).json({ message: 'Advisor not found' });
     await advisor.destroy();
     res.json({ message: 'Advisor deleted' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ── COFOUNDERS CRUD ───────────────────────────────────────────────────────────
+
+// List all cofounders
+router.get('/cofounders', guard, async (req, res) => {
+  try {
+    const cofounders = await Cofounder.findAll({ order: [['sortOrder', 'ASC'], ['createdAt', 'ASC']] });
+    res.json(cofounders);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Create cofounder
+router.post('/cofounders', guard, async (req, res) => {
+  try {
+    const { name, initials, role, bio, linkedinUrl, gradient, isActive, sortOrder } = req.body;
+    if (!name || !initials || !role) return res.status(400).json({ message: 'name, initials and role are required' });
+    const cofounder = await Cofounder.create({
+      name, initials, role, bio, linkedinUrl,
+      gradient: gradient || 'linear-gradient(135deg,#2563EB,#1E3A8A)',
+      isActive: isActive !== false,
+      sortOrder: sortOrder || 0,
+    });
+    res.status(201).json(cofounder);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Update cofounder
+router.put('/cofounders/:id', guard, async (req, res) => {
+  try {
+    const cofounder = await Cofounder.findByPk(req.params.id);
+    if (!cofounder) return res.status(404).json({ message: 'Cofounder not found' });
+    const { name, initials, role, bio, linkedinUrl, gradient, isActive, sortOrder } = req.body;
+    await cofounder.update({ name, initials, role, bio, linkedinUrl, gradient, isActive, sortOrder });
+    res.json(cofounder);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Delete cofounder
+router.delete('/cofounders/:id', guard, async (req, res) => {
+  try {
+    const cofounder = await Cofounder.findByPk(req.params.id);
+    if (!cofounder) return res.status(404).json({ message: 'Cofounder not found' });
+    await cofounder.destroy();
+    res.json({ message: 'Cofounder deleted' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

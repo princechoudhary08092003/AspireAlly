@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { User, MentorProfile, Advisor } = require('./models');
+const { User, MentorProfile, Advisor, Cofounder } = require('./models');
 
 const seedUser = async (data) => {
   const exists = await User.findOne({ where: { email: data.email } });
@@ -17,35 +17,64 @@ const seedAdvisors = async () => {
 
   await Advisor.bulkCreate([
     {
-      name: 'Alok Narain',
+      name: 'Advisor Name',
       initials: 'AN',
-      role: 'Leadership Coach & Trainer',
-      company: 'Enneagram & Emotional Intelligence Practitioner',
-      location: 'New Delhi, India',
-      bio: 'Certified Lumina Spark & Enneagram practitioner with 23K+ followers. Renowned for deep people skills, empathy-driven coaching, and building future-ready leaders.',
-      tags: ['Leadership', 'EI', 'Coaching'],
-      followers: '23K',
+      role: 'Senior Industry Leader',
+      company: 'Organisation Name',
+      location: 'City, India',
+      bio: 'Experienced professional with decades of cross-industry expertise. Add real details by editing this record in Admin → Manage Advisors.',
+      tags: ['Leadership', 'Strategy', 'Coaching'],
+      followers: '10K',
       gradient: 'linear-gradient(135deg,#C9920B,#F59E0B)',
-      linkedinUrl: 'https://www.linkedin.com/in/alok-narain-8277371',
+      linkedinUrl: '#',
       isActive: true,
       sortOrder: 1,
     },
     {
-      name: 'Chandrashekar Shetty',
-      initials: 'CS',
-      role: 'Senior Leader, BFSI',
-      company: 'Aditya Birla Sun Life Insurance',
-      location: 'Mumbai, India',
-      bio: '19+ years of leadership across Multinational Telecom & BFSI. IIM Kozhikode alumnus. Passionate about digital strategy, career development, and leadership excellence.',
-      tags: ['BFSI', 'Strategy', 'Digital'],
-      followers: '8K',
+      name: 'Advisor Name',
+      initials: 'AD',
+      role: 'Industry Expert',
+      company: 'Organisation Name',
+      location: 'City, India',
+      bio: 'Veteran leader with extensive experience in business strategy and talent development. Update this via Admin → Manage Advisors.',
+      tags: ['Business', 'Finance', 'Digital'],
+      followers: '5K',
       gradient: 'linear-gradient(135deg,#2563EB,#1E3A8A)',
-      linkedinUrl: 'https://www.linkedin.com/in/chshetty',
+      linkedinUrl: '#',
       isActive: true,
       sortOrder: 2,
     },
   ]);
-  console.log('Seeded initial advisors');
+  console.log('Seeded placeholder advisors');
+};
+
+const seedCofounders = async () => {
+  const count = await Cofounder.count();
+  if (count > 0) return;
+
+  await Cofounder.bulkCreate([
+    {
+      name: 'Co-Founder Name',
+      initials: 'CF',
+      role: 'Co-Founder & CEO',
+      bio: 'Visionary leader committed to bridging the gap between ambition and achievement. Update this via Admin → Manage Cofounders.',
+      linkedinUrl: '#',
+      gradient: 'linear-gradient(135deg,#2563EB,#1D4ED8)',
+      isActive: true,
+      sortOrder: 1,
+    },
+    {
+      name: 'Co-Founder Name',
+      initials: 'CF',
+      role: 'Co-Founder & COO',
+      bio: 'Operational expert passionate about building world-class mentorship experiences. Update this via Admin → Manage Cofounders.',
+      linkedinUrl: '#',
+      gradient: 'linear-gradient(135deg,#881337,#5C0D26)',
+      isActive: true,
+      sortOrder: 2,
+    },
+  ]);
+  console.log('Seeded placeholder cofounders');
 };
 
 const seedAll = async () => {
@@ -72,6 +101,7 @@ const seedAll = async () => {
   }
 
   await seedAdvisors();
+  await seedCofounders();
 };
 
 module.exports = { seedAll };
