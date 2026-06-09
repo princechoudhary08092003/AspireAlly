@@ -54,6 +54,23 @@ const seedAll = async () => {
   await seedUser({ email: 'demo.admin@mentorrise.in', password: 'Demo@1234', firstName: 'Demo', lastName: 'Admin', role: 'admin' });
   await seedUser({ email: 'mentor@demo.com', password: 'Demo@1234', firstName: 'Arjun', lastName: 'Sharma', role: 'mentor' });
   await seedUser({ email: 'mentee@demo.com', password: 'Demo@1234', firstName: 'Priya', lastName: 'Kapoor', role: 'mentee' });
+
+  // Always ensure demo mentor is approved and visible (model defaults to false)
+  const demoMentor = await User.findOne({ where: { email: 'mentor@demo.com' } });
+  if (demoMentor) {
+    await MentorProfile.update(
+      {
+        isApproved: true,
+        isVisible: true,
+        title: 'Senior Software Engineer',
+        company: 'MentorRise Demo',
+        bio: 'Demo mentor account for testing the platform. Available to guide mentees on technology, career growth, and leadership.',
+        expertise: JSON.stringify(['Technology', 'Career Growth', 'Leadership']),
+      },
+      { where: { userId: demoMentor.id } }
+    );
+  }
+
   await seedAdvisors();
 };
 

@@ -1,14 +1,10 @@
 const router = require('express').Router();
-const { Booking, TimeSlot, User, MentorProfile, Subscription } = require('../models');
+const { Booking, TimeSlot, User, MentorProfile } = require('../models');
 const { auth, requireRole } = require('../middleware/auth');
 
 // Mentee: book a slot
 router.post('/', auth, requireRole('mentee'), async (req, res) => {
   try {
-    // check active subscription
-    const sub = await Subscription.findOne({ where: { userId: req.user.id, status: 'active' } });
-    if (!sub) return res.status(403).json({ message: 'Active subscription required to book a session' });
-
     const { slotId, menteeNotes } = req.body;
     const slot = await TimeSlot.findByPk(slotId);
     if (!slot) return res.status(404).json({ message: 'Slot not found' });

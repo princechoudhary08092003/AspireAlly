@@ -14,7 +14,7 @@ export default function MenteeDashboard() {
   useEffect(() => {
     Promise.all([
       api.get('/bookings/my').then(r => setBookings(r.data)),
-      api.get('/payment/subscription').then(r => setSubscription(r.data.subscription)),
+      api.get('/payment/subscription').then(r => setSubscription(r.data.subscription)).catch(() => setSubscription(null)),
     ]).finally(() => setLoading(false))
   }, [])
 
@@ -62,24 +62,13 @@ export default function MenteeDashboard() {
           ))}
         </div>
 
-        {/* Subscription alert */}
-        {!subscription && (
-          <div style={{ background: 'var(--gold-light)', border: '1px solid var(--gold-bright)', borderRadius: 12, padding: '16px 20px', marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+        {bookings.length === 0 && (
+          <div style={{ background: 'var(--primary-light)', border: '1px solid var(--primary)', borderRadius: 12, padding: '16px 20px', marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
             <div>
-              <p style={{ fontWeight: 600, color: '#92400E', marginBottom: 2 }}>No active subscription</p>
-              <p style={{ fontSize: 13, color: '#B45309' }}>Subscribe to start booking sessions with mentors</p>
+              <p style={{ fontWeight: 600, color: 'var(--primary)', marginBottom: 2 }}>Ready to find your mentor?</p>
+              <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>Browse available mentors and book your first session</p>
             </div>
-            <Link to="/pricing" className="btn btn-gold btn-sm">View Plans</Link>
-          </div>
-        )}
-
-        {subscription && (
-          <div style={{ background: '#DCFCE7', border: '1px solid #86EFAC', borderRadius: 12, padding: '16px 20px', marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-            <div>
-              <p style={{ fontWeight: 600, color: '#166534', marginBottom: 2 }}>✓ Subscription Active — {subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)} Plan</p>
-              <p style={{ fontSize: 13, color: '#15803D' }}>Expires: {format(new Date(subscription.expiresAt), 'MMM d, yyyy')}</p>
-            </div>
-            <Link to="/mentors" className="btn btn-primary btn-sm">Book a Session</Link>
+            <Link to="/mentors" className="btn btn-primary btn-sm">Find a Mentor</Link>
           </div>
         )}
 

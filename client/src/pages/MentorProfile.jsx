@@ -23,11 +23,6 @@ export default function MentorProfile() {
   const handleBook = async () => {
     if (!user) { navigate('/login'); return }
     if (user.role !== 'mentee') return toast.error('Only mentees can book sessions')
-    if (!user.hasActiveSubscription) {
-      toast.error('You need an active subscription to book sessions')
-      navigate('/pricing')
-      return
-    }
     if (!booking) return toast.error('Please select a time slot')
     setBookingLoading(true)
     try {
@@ -167,11 +162,6 @@ export default function MentorProfile() {
                       {bookingLoading ? 'Booking…' : user ? 'Confirm Booking' : 'Sign In to Book'}
                     </button>
 
-                    {!user?.hasActiveSubscription && user?.role === 'mentee' && (
-                      <div className="alert alert-info" style={{ fontSize: 13 }}>
-                        Subscription required to book sessions. <Link to="/pricing" style={{ fontWeight: 600 }}>View plans →</Link>
-                      </div>
-                    )}
                   </div>
                 )}
               </div>
