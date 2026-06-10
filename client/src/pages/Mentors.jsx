@@ -66,7 +66,7 @@ export default function Mentors() {
         ) : (
           <>
             <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 20 }}>{mentors.length} mentor{mentors.length !== 1 ? 's' : ''} available</p>
-            <div className="grid-3">
+            <div className="mentor-grid">
               {mentors.map(m => <MentorCard key={m.id} mentor={m} />)}
             </div>
           </>

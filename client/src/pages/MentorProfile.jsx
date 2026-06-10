@@ -60,7 +60,7 @@ export default function MentorProfile() {
       </div>
 
       <div className="container" style={{ paddingTop: 32 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 32, alignItems: 'start' }}>
+        <div className="layout-main-sidebar">
           {/* Left: Profile */}
           <div>
             <div className="card" style={{ marginBottom: 24 }}>

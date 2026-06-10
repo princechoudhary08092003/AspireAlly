@@ -145,14 +145,23 @@ input,textarea,select{font-family:inherit}
 .text-gold{background:var(--grad-gold);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 
 /* ── AVATAR ── */
-.avatar{border-radius:50%;object-fit:cover;flex-shrink:0}
-.av-xs{width:28px;height:28px;font-size:11px}
-.av-sm{width:40px;height:40px;font-size:14px}
-.av-md{width:56px;height:56px;font-size:18px}
-.av-lg{width:80px;height:80px;font-size:26px}
-.av-xl{width:112px;height:112px;font-size:36px}
-.av-2xl{width:144px;height:144px;font-size:48px}
-.av-placeholder{display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;flex-shrink:0}
+.avatar{border-radius:50%;object-fit:cover;flex-shrink:0;display:block}
+/* av-* (used in homepage/new components) */
+.av-xs{width:28px;height:28px;min-width:28px;font-size:11px}
+.av-sm{width:40px;height:40px;min-width:40px;font-size:14px}
+.av-md{width:56px;height:56px;min-width:56px;font-size:18px}
+.av-lg{width:80px;height:80px;min-width:80px;font-size:26px}
+.av-xl{width:112px;height:112px;min-width:112px;font-size:36px}
+.av-2xl{width:144px;height:144px;min-width:144px;font-size:48px}
+/* avatar-* (aliases used in older components) */
+.avatar-xs{width:28px;height:28px;min-width:28px}
+.avatar-sm{width:40px;height:40px;min-width:40px}
+.avatar-md{width:56px;height:56px;min-width:56px}
+.avatar-lg{width:72px;height:72px;min-width:72px}
+.avatar-xl{width:112px;height:112px;min-width:112px}
+.avatar-2xl{width:144px;height:144px;min-width:144px}
+/* placeholder circles */
+.av-placeholder,.avatar-placeholder{display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;flex-shrink:0;border-radius:50%}
 
 /* ── CHIPS ── */
 .chip{display:inline-flex;align-items:center;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:500;background:var(--primary-xl);color:var(--primary-d);border:1px solid var(--primary-l)}
@@ -238,11 +247,29 @@ input,textarea,select{font-family:inherit}
 .step-line{position:relative}
 .step-line::before{content:'';position:absolute;top:28px;left:28px;right:28px;height:2px;background:linear-gradient(90deg,var(--primary-l),var(--maroon-l));z-index:0}
 
+/* ── RESPONSIVE LAYOUT HELPERS ── */
+/* Content + sticky sidebar (eg MentorProfile, Dashboards) */
+.layout-main-sidebar{display:grid;grid-template-columns:1fr 380px;gap:32px;align-items:start}
+.layout-main-sidebar-sm{display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:start}
+/* 2-equal columns */
+.layout-2col{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+/* FAQ / content-heavy 2-col */
+.layout-faq{display:grid;grid-template-columns:1fr 1.6fr;gap:72px;align-items:start}
+/* Outcomes dark section */
+.layout-outcomes{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+
+/* ── MENTOR CARD GRID — equal-height rows ── */
+.mentor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;align-items:stretch}
+.mentor-card,.mentor-grid > *{height:100%}
+
 /* ── RESPONSIVE ── */
 @media(max-width:1024px){
   .container{padding:0 24px}
   .section{padding:72px 0}
   .hide-lg{display:none!important}
+  .layout-main-sidebar{grid-template-columns:1fr 340px}
+  .layout-faq{gap:48px}
+  .layout-outcomes{gap:48px}
 }
 @media(max-width:768px){
   .container{padding:0 18px}
@@ -253,14 +280,21 @@ input,textarea,select{font-family:inherit}
   .full-md{width:100%!important}
   .text-center-md{text-align:center!important}
   .grid-2,.grid-3,.grid-4{grid-template-columns:1fr!important}
+  .layout-main-sidebar,.layout-main-sidebar-sm,.layout-2col,.layout-faq,.layout-outcomes{grid-template-columns:1fr!important;gap:24px!important}
   .display-1{font-size:36px!important;letter-spacing:-.02em!important}
   .display-2{font-size:28px!important}
   .h1{font-size:26px!important}
   .h2{font-size:22px!important}
+  /* Sidebar stacks below main on mobile */
+  .layout-main-sidebar > *:last-child,.layout-main-sidebar-sm > *:last-child{position:static!important}
+  /* Card action rows wrap on mobile */
+  .card-actions-row{flex-wrap:wrap!important;gap:8px!important}
 }
 @media(max-width:480px){
   .container{padding:0 14px}
   .hide-sm{display:none!important}
   .btn-lg{padding:13px 24px;font-size:14px}
   .btn-xl{padding:14px 28px;font-size:15px}
+  .section{padding:40px 0}
+  .mentor-grid{grid-template-columns:1fr}
 }

@@ -265,33 +265,40 @@ function AdminLoginModal({ onClose }) {
   )
 }
 
-/* ── MENTOR CARD (mini preview) ───────────────── */
+/* ── MENTOR CARD (mini preview — homepage horizontal scroll) ─────────── */
 function MentorPreviewCard({ mentor }) {
-  const { user, title, company, expertise, photoUrl, rating, sessionCount } = mentor
+  const { user, title, company, expertise, photoUrl, rating } = mentor
   const name = `${user?.firstName || ''} ${user?.lastName || ''}`.trim()
   const initials = `${user?.firstName?.[0] || ''}${user?.lastName?.[0] || ''}`
   return (
-    <div className="mentor-card" style={{ minWidth: 260 }}>
-      <div className="mentor-card-band" style={{ background: 'linear-gradient(135deg,#0D1628,#1E3A8A)' }} />
-      <div className="mentor-card-top">
+    <div style={{
+      background: '#fff', borderRadius: 20, border: '1px solid var(--border)',
+      minWidth: 240, maxWidth: 260, display: 'flex', flexDirection: 'column',
+      overflow: 'hidden', transition: 'all .25s', flexShrink: 0,
+    }}
+      onMouseEnter={e => { e.currentTarget.style.boxShadow = 'var(--sh-xl)'; e.currentTarget.style.transform = 'translateY(-4px)' }}
+      onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)' }}
+    >
+      {/* Band */}
+      <div style={{ height: 56, background: 'linear-gradient(135deg,#0D1628,#1E3A8A)', flexShrink: 0 }} />
+      {/* Avatar */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 20px 16px', marginTop: -32 }}>
         {photoUrl
-          ? <img src={photoUrl} alt={name} className="avatar av-lg" style={{ border: '3px solid #fff', boxShadow: 'var(--sh)', zIndex: 1, marginTop: 8 }} />
-          : <div className="av-placeholder av-lg" style={{ borderRadius: '50%', border: '3px solid #fff', boxShadow: 'var(--sh)', zIndex: 1, marginTop: 8, background: 'var(--grad-brand)', fontSize: 26 }}>{initials}</div>
+          ? <img src={photoUrl} alt={name} style={{ width: 64, height: 64, minWidth: 64, borderRadius: '50%', objectFit: 'cover', border: '3px solid #fff', boxShadow: 'var(--sh)' }} />
+          : <div style={{ width: 64, height: 64, minWidth: 64, borderRadius: '50%', background: 'var(--grad-brand)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 22, border: '3px solid #fff', boxShadow: 'var(--sh)' }}>{initials}</div>
         }
-        <h4 style={{ fontSize: 15, fontWeight: 700, marginTop: 10, marginBottom: 2 }}>{name}</h4>
-        {title && <p style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 2 }}>{title}</p>}
-        {company && <p style={{ fontSize: 11, color: 'var(--text-4)' }}>{company}</p>}
-      </div>
-      <div className="mentor-card-body">
+        <h4 style={{ fontSize: 14, fontWeight: 700, marginTop: 10, marginBottom: 2, textAlign: 'center' }}>{name}</h4>
+        {title && <p style={{ fontSize: 11, color: 'var(--text-3)', marginBottom: 2, textAlign: 'center', lineHeight: 1.4 }}>{title}</p>}
+        {company && <p style={{ fontSize: 10, color: 'var(--text-4)', textAlign: 'center' }}>{company}</p>}
         {expertise?.length > 0 && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, justifyContent: 'center', marginBottom: 12 }}>
-            {expertise.slice(0, 3).map(e => <span key={e} className="chip" style={{ fontSize: 10 }}>{e}</span>)}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, justifyContent: 'center', marginTop: 10 }}>
+            {expertise.slice(0, 3).map(e => <span key={e} className="chip" style={{ fontSize: 10, padding: '3px 9px' }}>{e}</span>)}
           </div>
         )}
       </div>
-      <div className="mentor-card-footer">
-        <span style={{ fontSize: 12, color: 'var(--text-3)', display: 'flex', alignItems: 'center', gap: 4 }}>
-          <FiStar size={12} style={{ color: 'var(--gold-b)' }} /> {rating > 0 ? rating.toFixed(1) : 'New'}
+      <div style={{ padding: '10px 16px', borderTop: '1px solid var(--border)', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
+        <span style={{ fontSize: 11, color: 'var(--text-3)', display: 'flex', alignItems: 'center', gap: 3 }}>
+          <FiStar size={11} style={{ color: 'var(--gold-b)' }} /> {rating > 0 ? rating.toFixed(1) : 'New'}
         </span>
         <Link to={`/mentors/${user?.id}`} className="btn btn-primary btn-xs btn-pill">Book →</Link>
       </div>
@@ -300,40 +307,66 @@ function MentorPreviewCard({ mentor }) {
 }
 
 /* ── PERSON CARD (team / advisor) ─────────────── */
-function PersonCard({ person, type }) {
+function PersonCard({ person }) {
   return (
-    <div className="person-card">
-      <div className="person-card-cover" style={{ background: person.gradient }} />
-      <div className="person-card-body">
-        <div className="person-card-avatar" style={{ display: 'flex', justifyContent: 'center' }}>
-          <div className="av-placeholder av-lg" style={{ borderRadius: '50%', border: '4px solid #fff', boxShadow: '0 8px 24px rgba(8,14,29,.15)', background: person.gradient, fontSize: 24 }}>
+    <div style={{
+      background: '#fff', borderRadius: 20, border: '1px solid var(--border)',
+      overflow: 'hidden', transition: 'all .25s', display: 'flex', flexDirection: 'column',
+    }}
+      onMouseEnter={e => { e.currentTarget.style.boxShadow = 'var(--sh-xl)'; e.currentTarget.style.transform = 'translateY(-4px)' }}
+      onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)' }}
+    >
+      {/* Coloured cover band */}
+      <div style={{ height: 80, background: person.gradient, flexShrink: 0 }} />
+      {/* Body */}
+      <div style={{ padding: '0 24px 24px', textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column' }}>
+        {/* Avatar — pushed up over the band */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: -40, marginBottom: 12 }}>
+          <div style={{
+            width: 80, height: 80, minWidth: 80,
+            borderRadius: '50%',
+            background: person.gradient,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: '#fff', fontWeight: 800, fontSize: 26,
+            border: '4px solid #fff',
+            boxShadow: '0 8px 24px rgba(8,14,29,.15)',
+          }}>
             {person.initials}
           </div>
         </div>
+
         <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 3 }}>{person.name}</h3>
         <p style={{ fontSize: 13, color: 'var(--primary)', fontWeight: 600, marginBottom: 4 }}>{person.role}</p>
-        {person.company && <p style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 8 }}>{person.company}</p>}
-        {person.location && (
-          <p style={{ fontSize: 11, color: 'var(--text-4)', marginBottom: 10 }}>📍 {person.location}</p>
-        )}
+        {person.company && <p style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 6 }}>{person.company}</p>}
+        {person.location && <p style={{ fontSize: 11, color: 'var(--text-4)', marginBottom: 10 }}>📍 {person.location}</p>}
+
         {person.bio && (
           <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.65, marginBottom: 14 }}>{person.bio}</p>
         )}
-        {person.tags && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, justifyContent: 'center', marginBottom: 14 }}>
+
+        {person.tags?.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, justifyContent: 'center', marginBottom: 12 }}>
             {person.tags.map(t => <span key={t} className="chip chip-gray" style={{ fontSize: 11 }}>{t}</span>)}
           </div>
         )}
+
         {person.followers && (
           <p style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 14 }}>
             <strong style={{ color: 'var(--text)' }}>{person.followers}+</strong> LinkedIn followers
           </p>
         )}
-        <a href={person.linkedin} target="_blank" rel="noreferrer"
-          className="btn btn-outline btn-sm btn-full btn-pill"
-          style={{ gap: 7 }}>
-          <FiLinkedin size={14} /> View Profile
-        </a>
+
+        <div style={{ marginTop: 'auto', paddingTop: 14 }}>
+          <a
+            href={person.linkedin || '#'}
+            target={person.linkedin && person.linkedin !== '#' ? '_blank' : undefined}
+            rel="noreferrer"
+            className="btn btn-outline btn-sm btn-full btn-pill"
+            style={{ gap: 7 }}
+          >
+            <FiLinkedin size={14} /> View Profile
+          </a>
+        </div>
       </div>
     </div>
   )
@@ -458,7 +491,7 @@ export default function Home() {
       {/* ── OUTCOMES (dark section) ── */}
       <section className="section" style={{ background: 'var(--navy)', color: '#fff' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
+          <div className="layout-outcomes">
             <div>
               <div className="section-label section-label-gold" style={{ marginBottom: 20 }}>Outcomes</div>
               <h2 className="h1" style={{ color: '#fff', marginBottom: 20 }}>
@@ -669,7 +702,7 @@ export default function Home() {
       {/* ── FAQs ── */}
       <section className="section" style={{ background: '#fff' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.6fr', gap: 72, alignItems: 'start' }}>
+          <div className="layout-faq">
             {/* Left sticky label */}
             <div style={{ position: 'sticky', top: 100 }}>
               <div className="section-label section-label-blue" style={{ marginBottom: 20 }}>FAQs</div>

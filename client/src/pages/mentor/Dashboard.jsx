@@ -117,7 +117,7 @@ export default function MentorDashboard() {
           ))}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 24, alignItems: 'start' }}>
+        <div className="layout-main-sidebar-sm">
           {/* Bookings */}
           <div className="card">
             <div className="card-header">
