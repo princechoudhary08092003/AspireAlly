@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../utils/api'
@@ -270,6 +270,7 @@ function MentorPreviewCard({ mentor }) {
   const { user, title, company, expertise, photoUrl, rating } = mentor
   const name = `${user?.firstName || ''} ${user?.lastName || ''}`.trim()
   const initials = `${user?.firstName?.[0] || ''}${user?.lastName?.[0] || ''}`
+  const [imgErr, setImgErr] = React.useState(false)
   return (
     <div style={{
       background: '#fff', borderRadius: 20, border: '1px solid var(--border)',
@@ -283,8 +284,8 @@ function MentorPreviewCard({ mentor }) {
       <div style={{ height: 56, background: 'linear-gradient(135deg,#0D1628,#1E3A8A)', flexShrink: 0 }} />
       {/* Avatar */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 20px 16px', marginTop: -32 }}>
-        {photoUrl
-          ? <img src={photoUrl} alt={name} style={{ width: 64, height: 64, minWidth: 64, borderRadius: '50%', objectFit: 'cover', border: '3px solid #fff', boxShadow: 'var(--sh)' }} />
+        {photoUrl && !imgErr
+          ? <img src={photoUrl} alt={name} onError={() => setImgErr(true)} style={{ width: 64, height: 64, minWidth: 64, borderRadius: '50%', objectFit: 'cover', border: '3px solid #fff', boxShadow: 'var(--sh)' }} />
           : <div style={{ width: 64, height: 64, minWidth: 64, borderRadius: '50%', background: 'var(--grad-brand)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 22, border: '3px solid #fff', boxShadow: 'var(--sh)' }}>{initials}</div>
         }
         <h4 style={{ fontSize: 14, fontWeight: 700, marginTop: 10, marginBottom: 2, textAlign: 'center' }}>{name}</h4>

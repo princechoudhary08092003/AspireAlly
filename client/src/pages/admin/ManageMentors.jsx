@@ -89,12 +89,12 @@ export default function ManageMentors() {
                   <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', flexWrap: 'wrap' }}>
                     {/* Photo */}
                     {p?.photoUrl ? (
-                      <img src={p.photoUrl} alt="" className="avatar avatar-md" />
-                    ) : (
-                      <div className="avatar-placeholder avatar-md" style={{ fontSize: 16 }}>
-                        {mentor.firstName?.[0]}{mentor.lastName?.[0]}
-                      </div>
-                    )}
+                      <img src={p.photoUrl} alt="" style={{ width: 56, height: 56, minWidth: 56, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+                        onError={e => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling.style.display = 'flex' }} />
+                    ) : null}
+                    <div style={{ width: 56, height: 56, minWidth: 56, borderRadius: '50%', background: 'linear-gradient(135deg,var(--primary),var(--maroon))', display: p?.photoUrl ? 'none' : 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 16, flexShrink: 0 }}>
+                      {mentor.firstName?.[0]}{mentor.lastName?.[0]}
+                    </div>
                     {/* Info */}
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 4 }}>

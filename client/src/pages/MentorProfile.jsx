@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../utils/api'
@@ -15,6 +15,7 @@ export default function MentorProfile() {
   const [booking, setBooking] = useState(null)
   const [bookingLoading, setBookingLoading] = useState(false)
   const [notes, setNotes] = useState('')
+  const [imgError, setImgError] = useState(false)
 
   useEffect(() => {
     api.get(`/mentors/${id}`).then(r => setData(r.data)).catch(() => navigate('/mentors')).finally(() => setLoading(false))
@@ -67,10 +68,10 @@ export default function MentorProfile() {
               <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--maroon))', height: 120, borderRadius: '12px 12px 0 0' }} />
               <div style={{ padding: '0 28px 28px' }}>
                 <div style={{ marginTop: -40, marginBottom: 16 }}>
-                  {photoUrl ? (
-                    <img src={photoUrl} alt={name} className="avatar avatar-xl" style={{ border: '4px solid white', boxShadow: 'var(--sh-sm)' }} />
+                  {photoUrl && !imgError ? (
+                    <img src={photoUrl} alt={name} onError={() => setImgError(true)} style={{ width: 112, height: 112, minWidth: 112, borderRadius: '50%', objectFit: 'cover', border: '4px solid white', boxShadow: 'var(--sh-sm)', display: 'block' }} />
                   ) : (
-                    <div className="avatar-placeholder avatar-xl" style={{ border: '4px solid white', boxShadow: 'var(--sh-sm)', fontSize: 32 }}>{initials}</div>
+                    <div style={{ width: 112, height: 112, minWidth: 112, borderRadius: '50%', background: 'linear-gradient(135deg, var(--primary), var(--maroon))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 36, border: '4px solid white', boxShadow: 'var(--sh-sm)' }}>{initials}</div>
                   )}
                 </div>
                 <h1 style={{ fontSize: 26, fontWeight: 700, marginBottom: 4 }}>{name}</h1>

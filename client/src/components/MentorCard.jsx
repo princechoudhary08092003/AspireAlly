@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FiStar, FiBriefcase, FiCalendar, FiArrowRight } from 'react-icons/fi'
 
@@ -5,6 +6,7 @@ export default function MentorCard({ mentor }) {
   const { user, title, company, bio, expertise, rating, sessionCount, photoUrl } = mentor
   const name = `${user?.firstName || ''} ${user?.lastName || ''}`.trim()
   const initials = `${user?.firstName?.[0] || ''}${user?.lastName?.[0] || ''}`
+  const [imgError, setImgError] = useState(false)
 
   return (
     <div style={{
@@ -25,10 +27,11 @@ export default function MentorCard({ mentor }) {
 
       <div style={{ padding: '20px 20px 0', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
         {/* Avatar — always a perfect circle */}
-        {photoUrl ? (
+        {photoUrl && !imgError ? (
           <img
             src={photoUrl}
             alt={name}
+            onError={() => setImgError(true)}
             style={{
               width: 64, height: 64, minWidth: 64,
               borderRadius: '50%',
