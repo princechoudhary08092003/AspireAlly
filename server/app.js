@@ -21,6 +21,9 @@ app.use('/api/payment', require('./routes/payment'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/advisors', require('./routes/advisors'));
 app.use('/api/cofounders', require('./routes/cofounders'));
+app.use('/api/faqs', require('./routes/faqs'));
+app.use('/api/testimonials', require('./routes/testimonials'));
+app.use('/api/site-config', require('./routes/siteconfig'));
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', env: process.env.NODE_ENV }));
 

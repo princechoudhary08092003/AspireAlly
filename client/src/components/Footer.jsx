@@ -33,13 +33,13 @@ export default function Footer() {
           <div>
             <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,.35)', marginBottom: 16 }}>Programme</p>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {[['/', 'Home'], ['/mentors', 'Find Mentors'], ['/pricing', 'Pricing & Plans'], ['/register', 'Join Programme']].map(([to, label]) => (
-                <li key={to}>
-                  <Link to={to} style={{ fontSize: 14, color: 'rgba(255,255,255,.5)', transition: 'color .18s' }}
+              {[['/', 'Home'], ['/mentors', 'Find Mentors'], ['/#how-it-works', 'How It Works'], ['/#about', 'About'], ['/#faq', 'FAQ']].map(([to, label]) => (
+                <li key={label}>
+                  <a href={to} style={{ fontSize: 14, color: 'rgba(255,255,255,.5)', transition: 'color .18s', textDecoration: 'none' }}
                     onMouseEnter={e => e.currentTarget.style.color = '#fff'}
                     onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,.5)'}>
                     {label}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>

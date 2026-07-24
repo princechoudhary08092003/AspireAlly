@@ -36,7 +36,10 @@ export default function Navbar() {
   const navLinks = [
     { to: '/', label: 'Home' },
     { to: '/mentors', label: 'Find Mentors' },
-    { to: '/pricing', label: 'Pricing' },
+    { to: '/#how-it-works', label: 'How It Works' },
+    { to: '/#about', label: 'About' },
+    { to: '/#faq', label: 'FAQ' },
+    { to: '/#contact', label: 'Contact Us' },
   ]
 
   const navBg    = scrolled ? 'rgba(255,255,255,0.96)' : onHero ? 'rgba(8,14,29,0.55)' : 'rgba(255,255,255,0.96)'
@@ -76,17 +79,28 @@ export default function Navbar() {
           {/* Desktop links */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 4 }} className="hide-md">
             {navLinks.map(l => (
-              <Link key={l.to} to={l.to} style={{
-                padding: '8px 16px', borderRadius: 8, fontSize: 14, fontWeight: 500,
-                color: isDark
-                  ? (pathname === l.to ? 'var(--gold-b)' : 'rgba(255,255,255,.85)')
-                  : (pathname === l.to ? 'var(--primary)' : 'var(--text-2)'),
-                background: pathname === l.to && !isDark ? 'var(--primary-xl)' : 'transparent',
-                transition: 'all .2s',
-              }}
-                onMouseEnter={e => { if (pathname !== l.to) e.currentTarget.style.background = isDark ? 'rgba(255,255,255,.1)' : 'var(--bg-2)' }}
-                onMouseLeave={e => { if (pathname !== l.to) e.currentTarget.style.background = 'transparent' }}
-              >{l.label}</Link>
+              l.to.startsWith('/#') ? (
+                <a key={l.to} href={l.to} style={{
+                  padding: '8px 16px', borderRadius: 8, fontSize: 14, fontWeight: 500,
+                  color: isDark ? 'rgba(255,255,255,.85)' : 'var(--text-2)',
+                  background: 'transparent', textDecoration: 'none', transition: 'all .2s',
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,.1)' : 'var(--bg-2)' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
+                >{l.label}</a>
+              ) : (
+                <Link key={l.to} to={l.to} style={{
+                  padding: '8px 16px', borderRadius: 8, fontSize: 14, fontWeight: 500,
+                  color: isDark
+                    ? (pathname === l.to ? 'var(--gold-b)' : 'rgba(255,255,255,.85)')
+                    : (pathname === l.to ? 'var(--primary)' : 'var(--text-2)'),
+                  background: pathname === l.to && !isDark ? 'var(--primary-xl)' : 'transparent',
+                  transition: 'all .2s',
+                }}
+                  onMouseEnter={e => { if (pathname !== l.to) e.currentTarget.style.background = isDark ? 'rgba(255,255,255,.1)' : 'var(--bg-2)' }}
+                  onMouseLeave={e => { if (pathname !== l.to) e.currentTarget.style.background = 'transparent' }}
+                >{l.label}</Link>
+              )
             ))}
           </div>
 
@@ -149,6 +163,12 @@ export default function Navbar() {
                 <Link to="/register" className="btn btn-sm btn-primary">Get Started</Link>
               </div>
             )}
+            {/* Become a Mentor CTA — always visible on desktop when not logged in */}
+            {!user && (
+              <a href="/#contact" className="hide-md" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 14px', borderRadius: 8, fontSize: 13, fontWeight: 600, background: isDark ? 'rgba(255,255,255,.1)' : 'var(--maroon)', color: '#fff', textDecoration: 'none', border: isDark ? '1px solid rgba(255,255,255,.2)' : 'none' }}>
+                Become a Mentor
+              </a>
+            )}
 
             {/* Mobile hamburger */}
             <button
@@ -173,10 +193,17 @@ export default function Navbar() {
         }}>
           <div style={{ padding: '12px 18px 20px', display: 'flex', flexDirection: 'column', gap: 4 }}>
             {navLinks.map(l => (
-              <Link key={l.to} to={l.to}
-                style={{ padding: '12px 14px', fontSize: 15, fontWeight: 500, color: pathname === l.to ? 'var(--primary)' : 'var(--text)', borderRadius: 8, background: pathname === l.to ? 'var(--primary-xl)' : 'transparent' }}>
-                {l.label}
-              </Link>
+              l.to.startsWith('/#') ? (
+                <a key={l.to} href={l.to}
+                  style={{ padding: '12px 14px', fontSize: 15, fontWeight: 500, color: 'var(--text)', borderRadius: 8, background: 'transparent', textDecoration: 'none' }}>
+                  {l.label}
+                </a>
+              ) : (
+                <Link key={l.to} to={l.to}
+                  style={{ padding: '12px 14px', fontSize: 15, fontWeight: 500, color: pathname === l.to ? 'var(--primary)' : 'var(--text)', borderRadius: 8, background: pathname === l.to ? 'var(--primary-xl)' : 'transparent' }}>
+                  {l.label}
+                </Link>
+              )
             ))}
             {!user && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 12 }}>

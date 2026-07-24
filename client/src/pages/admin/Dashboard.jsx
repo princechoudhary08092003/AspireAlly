@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../utils/api'
-import { FiUsers, FiCalendar, FiCreditCard, FiAlertCircle, FiStar, FiHeart } from 'react-icons/fi'
+import { FiUsers, FiCalendar, FiCreditCard, FiAlertCircle, FiStar, FiHeart, FiMessageSquare, FiSettings } from 'react-icons/fi'
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null)
@@ -93,6 +93,15 @@ export default function AdminDashboard() {
               </Link>
               <Link to="/admin/cofounders" className="btn btn-ghost" style={{ justifyContent: 'flex-start', gap: 10 }}>
                 <FiHeart size={15} /> Manage Co-Founders
+              </Link>
+              <Link to="/admin/testimonials" className="btn btn-ghost" style={{ justifyContent: 'flex-start', gap: 10 }}>
+                <FiStar size={15} /> Manage Testimonials
+              </Link>
+              <Link to="/admin/faqs" className="btn btn-ghost" style={{ justifyContent: 'flex-start', gap: 10 }}>
+                <FiMessageSquare size={15} /> Manage FAQs
+              </Link>
+              <Link to="/admin/site-config" className="btn btn-ghost" style={{ justifyContent: 'flex-start', gap: 10 }}>
+                <FiSettings size={15} /> Site Settings (Form Links)
               </Link>
             </div>
           </div>

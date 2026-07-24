@@ -1,757 +1,574 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import api from '../utils/api'
-import toast from 'react-hot-toast'
 import {
-  FiArrowRight, FiCheckCircle, FiLinkedin, FiLock,
-  FiMail, FiStar, FiUsers, FiCalendar, FiTrendingUp,
-  FiTarget, FiAward, FiBook, FiZap, FiShield,
-  FiMessageSquare, FiPlus, FiMinus, FiHeart, FiGlobe, FiLayers
+  FiArrowRight, FiCheck, FiStar, FiBriefcase,
+  FiChevronDown, FiChevronUp, FiMail,
+  FiTarget, FiTrendingUp, FiShield, FiHeart, FiBookOpen, FiThumbsUp, FiUsers, FiAward, FiLinkedin
 } from 'react-icons/fi'
 
-/* ── DATA ──────────────────────────────────────── */
+/* ── open URL or fallback to email ── */
+const openLink = (url) => {
+  if (url) window.open(url, '_blank', 'noopener')
+  else window.location.href = 'mailto:hello@mentorrise.in'
+}
+
+/* ── Static content ────────────────────────────────────────────── */
+const WHY_ITEMS = [
+  { icon: <FiTrendingUp />, title: 'Real-World Experience', desc: 'Learn from industry leaders with decades of hands-on expertise across diverse sectors.' },
+  { icon: <FiUsers />, title: 'Professional Networking', desc: 'Build lasting connections with top professionals who open doors across industries.' },
+  { icon: <FiTarget />, title: 'Personalised Growth Plan', desc: 'Develop a customised career roadmap tailored to your unique goals and aspirations.' },
+  { icon: <FiBookOpen />, title: 'Structured Sessions', desc: 'Gain clarity through focused, goal-oriented mentoring sessions with clear outcomes.' },
+  { icon: <FiShield />, title: 'Diverse Expertise', desc: 'Access mentors from varied industries, roles, and professional backgrounds.' },
+  { icon: <FiThumbsUp />, title: 'Constructive Feedback', desc: 'Receive honest, actionable insights to accelerate your professional growth.' },
+  { icon: <FiAward />, title: 'Certificate of Completion', desc: 'Earn formal recognition upon successfully completing the full mentorship programme.' },
+]
+
 const STEPS = [
-  { num: '01', icon: <FiBook />, title: 'Onboarding Masterclass', desc: 'Understand the full scope of the programme. Set expectations and chart your starting point.' },
-  { num: '02', icon: <FiTarget />, title: 'Smart Goals (STAR)', desc: 'Define measurable, ambitious goals using the STAR framework with your dedicated mentor.' },
-  { num: '03', icon: <FiUsers />, title: 'Mentor Session', desc: 'Deep 1-on-1 with your chosen industry leader — strategy, guidance, real-world insight.' },
-  { num: '04', icon: <FiAward />, title: 'Roadmap & Action', desc: 'Consolidate learnings, build your action plan, and launch your personalised career roadmap.' },
+  { n: '01', title: 'Request', desc: 'Submit your interest through our application form to join the programme.' },
+  { n: '02', title: 'Review', desc: 'Our team reviews your application and matches you with a suitable mentor based on your goals.' },
+  { n: '03', title: 'Introductory Session', desc: 'Enjoy a complimentary 15-minute intro call with your matched mentor before committing.' },
+  { n: '04', title: 'Confirm', desc: 'Confirm your mentor match and schedule your first official mentoring session.' },
+  { n: '05', title: '3 Mentoring Sessions', desc: 'Participate in three structured, goal-oriented mentoring sessions with your mentor.' },
+  { n: '06', title: 'Certificate', desc: 'Receive your Certificate of Completion upon finishing the programme.' },
+  { n: '07', title: 'Feedback', desc: 'Share your experience and insights to help us continuously improve.' },
 ]
 
-const OUTCOMES = [
-  'Structure a personalised career roadmap',
-  'Identify and leverage your key strengths',
-  'Understand market fitment and opportunities',
-  'Define professional goals aligned with your values',
-  'Build a strong personal brand and online presence',
-  'Develop an actionable networking strategy',
+const OBJECTIVES = [
+  'Connect mentees with experienced professionals in their field',
+  'Provide structured, goal-oriented mentoring sessions',
+  'Help mentees develop clear and actionable career plans',
+  'Foster professional growth and skill development',
+  'Build a strong, impactful mentorship community',
+]
+const TAKEAWAYS = [
+  'Industry-specific insights and career guidance',
+  'Personalised roadmap for professional development',
+  'Certificate of completion and programme recognition',
+  'Access to a network of industry leaders and peers',
+  'Confidence and clarity to make impactful career moves',
+]
+const MENTEE_DOS = [
+  'Come prepared with questions and clear goals for each session',
+  'Be open to feedback and new perspectives',
+  'Respect your mentor\'s time and be punctual',
+  'Follow through on agreed actions between sessions',
+]
+const MENTEE_DONTS = [
+  'Expect your mentor to do the work for you',
+  'Be passive — actively engage in every session',
+  'Miss sessions without prior notice',
+  'Limit conversations only to surface-level topics',
+]
+const MENTOR_DOS = [
+  'Be punctual and well-prepared for every session',
+  'Provide honest, constructive, and actionable feedback',
+  'Share real-world experiences and practical insights',
+  'Encourage, motivate, and challenge your mentee',
+  'Maintain confidentiality and professional boundaries',
+]
+const MENTOR_DONTS = [
+  'Make promises you are not able to keep',
+  'Dismiss or belittle your mentee\'s ideas',
+  'Cancel sessions without sufficient prior notice',
+  'Share the mentee\'s personal information with others',
 ]
 
-const STATS = [
-  { val: '200+', lbl: 'Expert Mentors', icon: <FiUsers /> },
-  { val: '1,500+', lbl: 'Sessions Completed', icon: <FiCalendar /> },
-  { val: '95%', lbl: 'Mentee Satisfaction', icon: <FiTrendingUp /> },
-  { val: '12+', lbl: 'Industries Covered', icon: <FiAward /> },
-]
-
-/* ── WHY MENTOR DATA ───────────────────────────── */
-const MENTOR_REASONS = [
-  {
-    icon: <FiHeart size={22} />,
-    title: 'Give Back to the Next Generation',
-    desc: 'After years of navigating corporate challenges, mentoring is the most meaningful way to pay it forward — helping talented professionals avoid the pitfalls you once faced.',
-    color: '#881337',
-    bg: '#fff1f2',
-  },
-  {
-    icon: <FiGlobe size={22} />,
-    title: 'Expand Your Own Network',
-    desc: "Mentoring isn't one-directional. You gain fresh perspectives, build relationships with high-potential professionals, and stay connected to the evolving pulse of your industry.",
-    color: '#2563EB',
-    bg: '#eff6ff',
-  },
-  {
-    icon: <FiLayers size={22} />,
-    title: 'Sharpen Your Leadership Edge',
-    desc: 'Teaching what you know forces you to articulate, organise and refine your thinking. Mentors consistently report becoming better communicators and stronger leaders.',
-    color: '#C9920B',
-    bg: '#fefce8',
-  },
-  {
-    icon: <FiTrendingUp size={22} />,
-    title: 'Create Measurable Impact',
-    desc: "One honest conversation can redirect a career. As a mentor on Mentor Rise, you'll guide structured sessions — not just advise, but co-create real action plans that produce results.",
-    color: '#059669',
-    bg: '#f0fdf4',
-  },
-  {
-    icon: <FiAward size={22} />,
-    title: 'Build a Legacy of Excellence',
-    desc: "Your career achievements become a blueprint others can follow. Mentor Rise lets you formalise your expertise into a structured programme that outlasts any single session.",
-    color: '#7C3AED',
-    bg: '#f5f3ff',
-  },
-  {
-    icon: <FiUsers size={22} />,
-    title: 'Be Part of a Curated Community',
-    desc: "Join an exclusive network of senior leaders who believe in structured, high-quality mentorship. Share best practices, collaborate on career frameworks, and elevate the profession.",
-    color: '#0891B2',
-    bg: '#ecfeff',
-  },
-]
-
-/* ── TESTIMONIALS DATA ─────────────────────────── */
-const TESTIMONIALS = [
-  {
-    name: 'Priya Sharma',
-    role: 'Marketing Manager → Head of Brand',
-    company: 'Fintech Startup, Bengaluru',
-    quote: "I had been stuck at the same designation for three years, unsure of what was holding me back. My Mentor Rise mentor helped me see exactly where my gaps were and how to fill them. Within six months I was heading a brand team.",
-    rating: 5,
-    initials: 'PS',
-    gradient: 'linear-gradient(135deg,#2563EB,#1D4ED8)',
-    tag: 'Career Transition',
-  },
-  {
-    name: 'Arjun Mehta',
-    role: 'Software Engineer → Product Manager',
-    company: 'SaaS Company, Pune',
-    quote: "The STAR goal-setting session was a game-changer. I walked in with vague aspirations and walked out with a 90-day plan. My mentor's cross-industry perspective pushed me to think bigger than my immediate role.",
-    rating: 5,
-    initials: 'AM',
-    gradient: 'linear-gradient(135deg,#881337,#5C0D26)',
-    tag: 'Role Switch',
-  },
-  {
-    name: 'Neha Kapoor',
-    role: 'MBA Fresher → Strategy Analyst',
-    company: 'Big 4 Consulting, Delhi',
-    quote: "As a fresh MBA graduate the job market was overwhelming. My mentor had been through it all — the interview circuits, the negotiations, the politics. Their coaching gave me real confidence, not just textbook answers.",
-    rating: 5,
-    initials: 'NK',
-    gradient: 'linear-gradient(135deg,#C9920B,#F59E0B)',
-    tag: 'Campus to Corporate',
-  },
-  {
-    name: 'Rohan Dsouza',
-    role: 'Sales Executive → Business Development Lead',
-    company: 'FMCG Enterprise, Mumbai',
-    quote: "What sets Mentor Rise apart is the structure. It's not just a chat — there's a clear framework, clear outcomes. My mentor held me accountable, reviewed my progress, and pushed me when I needed it.",
-    rating: 5,
-    initials: 'RD',
-    gradient: 'linear-gradient(135deg,#059669,#047857)',
-    tag: 'Leadership Growth',
-  },
-]
-
-/* ── FAQS DATA ─────────────────────────────────── */
-const FAQS = [
-  {
-    q: 'Who is the Mentor Rise programme designed for?',
-    a: 'Mentor Rise is built for working professionals, MBA graduates, and career switchers who want structured, personalised guidance — not generic advice. Whether you are two years into your career or ten, if you are serious about growth, this is for you.',
-  },
-  {
-    q: 'How does mentor matching work?',
-    a: 'You browse our curated roster of approved mentors — each with detailed profiles including expertise, industry background, and availability. You pick who resonates with your goals and book directly from their open slots.',
-  },
-  {
-    q: 'What actually happens in a session?',
-    a: 'Sessions are 1-on-1 and typically 60 minutes. Your mentor will prepare based on your goals and notes submitted at booking. Sessions cover strategic career mapping, specific challenges, industry insight, and concrete action points — not casual conversation.',
-  },
-  {
-    q: 'Is the programme fully online?',
-    a: 'Yes, completely. Sessions happen via Zoom, Microsoft Teams, or Google Meet. Your mentor adds the link before the session and you access it directly from your dashboard.',
-  },
-  {
-    q: 'Can I book sessions with multiple mentors?',
-    a: 'Absolutely. With an active subscription you can book sessions with any approved mentor on the platform. Many mentees work with two or three mentors across different functional areas.',
-  },
-  {
-    q: 'How do I become a mentor on Mentor Rise?',
-    a: 'Register as a mentor, complete your profile, and submit for review. Our admin team personally reviews each application to ensure quality. Once approved, you set your own availability and begin accepting bookings.',
-  },
-  {
-    q: 'What makes Mentor Rise different from LinkedIn networking?',
-    a: 'LinkedIn gets you a connection; Mentor Rise gets you a structured relationship with accountability. Every interaction follows a defined framework — onboarding, STAR goal-setting, sessions, and an action roadmap — designed to produce measurable career outcomes.',
-  },
-  {
-    q: 'Is my session information kept confidential?',
-    a: 'Yes. Notes, goals, and session details are only visible to you and your mentor. Mentor Rise does not share individual session content with third parties.',
-  },
-]
-
-/* ── FAQ ITEM ──────────────────────────────────── */
-function FaqItem({ faq, index }) {
+/* ── Sub-components ──────────────────────────────────────────── */
+function FaqItem({ faq }) {
   const [open, setOpen] = useState(false)
   return (
-    <div style={{
-      border: `1px solid ${open ? 'var(--primary)' : 'var(--border)'}`,
-      borderRadius: 14,
-      overflow: 'hidden',
-      transition: 'border-color .2s, box-shadow .2s',
-      boxShadow: open ? '0 4px 20px rgba(37,99,235,.1)' : 'none',
-      background: '#fff',
-    }}>
-      <button
-        onClick={() => setOpen(!open)}
-        style={{
-          width: '100%', padding: '20px 24px', display: 'flex', alignItems: 'center',
-          justifyContent: 'space-between', gap: 16, background: 'none', border: 'none',
-          cursor: 'pointer', textAlign: 'left',
-        }}>
-        <span style={{ fontSize: 15, fontWeight: 600, color: open ? 'var(--primary)' : 'var(--text)', lineHeight: 1.4 }}>
-          {faq.q}
-        </span>
-        <div style={{
-          width: 28, height: 28, borderRadius: '50%', flexShrink: 0, display: 'flex',
-          alignItems: 'center', justifyContent: 'center',
-          background: open ? 'var(--primary)' : 'var(--bg-2)',
-          transition: 'all .2s',
-        }}>
-          {open
-            ? <FiMinus size={13} color="#fff" />
-            : <FiPlus size={13} color="var(--text-3)" />
-          }
-        </div>
+    <div style={{ background: '#fff', borderRadius: 12, border: '1px solid var(--border)', overflow: 'hidden' }}>
+      <button onClick={() => setOpen(o => !o)} style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 20px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', gap: 16 }}>
+        <span style={{ fontWeight: 600, fontSize: 15, color: 'var(--text)', lineHeight: 1.4 }}>{faq.question}</span>
+        {open ? <FiChevronUp size={18} style={{ color: 'var(--primary)', flexShrink: 0 }} /> : <FiChevronDown size={18} style={{ color: 'var(--text-3)', flexShrink: 0 }} />}
       </button>
-      <div style={{
-        maxHeight: open ? 300 : 0, overflow: 'hidden',
-        transition: 'max-height .3s ease',
-      }}>
-        <p style={{ padding: '0 24px 20px', fontSize: 14, color: 'var(--text-2)', lineHeight: 1.75 }}>
-          {faq.a}
-        </p>
-      </div>
+      {open && <div style={{ padding: '0 20px 18px', fontSize: 14, color: 'var(--text-2)', lineHeight: 1.8 }}>{faq.answer}</div>}
     </div>
   )
 }
 
-/* ── ADMIN LOGIN MODAL ─────────────────────────── */
-function AdminLoginModal({ onClose }) {
-  const { login } = useAuth()
-  const navigate = useNavigate()
-  const [form, setForm] = useState({ email: '', password: '' })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+const SectionHeading = ({ tag, title, subtitle, light }) => (
+  <div style={{ textAlign: 'center', marginBottom: 48 }}>
+    {tag && <span style={{ display: 'inline-block', background: light ? 'rgba(255,255,255,.15)' : 'var(--primary-xl)', color: light ? '#fff' : 'var(--primary)', padding: '4px 14px', borderRadius: 100, fontSize: 12, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: 12 }}>{tag}</span>}
+    <h2 style={{ fontSize: 'clamp(24px,4vw,36px)', fontWeight: 800, color: light ? '#fff' : 'var(--text)', lineHeight: 1.25, letterSpacing: '-.02em', marginBottom: subtitle ? 14 : 0 }}>{title}</h2>
+    {subtitle && <p style={{ fontSize: 16, color: light ? 'rgba(255,255,255,.75)' : 'var(--text-2)', maxWidth: 620, margin: '0 auto', lineHeight: 1.7 }}>{subtitle}</p>}
+  </div>
+)
 
-  const submit = async (e) => {
-    e.preventDefault(); setError(''); setLoading(true)
-    try {
-      const user = await login(form.email, form.password)
-      if (user.role !== 'admin') { toast.error('Not an admin account'); setLoading(false); return }
-      toast.success('Welcome, Admin!'); onClose(); navigate('/admin')
-    } catch (err) {
-      setError(err.response?.data?.message || 'Invalid credentials')
-    } finally { setLoading(false) }
-  }
-
-  return (
-    <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(8,14,29,.7)', backdropFilter: 'blur(6px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-      <div onClick={e => e.stopPropagation()} style={{ background: '#fff', borderRadius: 20, width: '100%', maxWidth: 400, boxShadow: '0 32px 64px rgba(8,14,29,.3)', overflow: 'hidden' }}>
-        <div style={{ background: 'linear-gradient(135deg,#080E1D,#1E2D4F)', padding: '24px 28px 20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--grad-brand)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <FiShield size={15} color="#fff" />
-            </div>
-            <span style={{ color: '#fff', fontWeight: 800, fontSize: 16 }}>Admin Portal</span>
-          </div>
-          <p style={{ color: 'rgba(255,255,255,.5)', fontSize: 13 }}>Restricted access — authorised users only</p>
-        </div>
-        <div style={{ padding: '24px 28px 28px' }}>
-          {error && <div className="alert alert-error" style={{ marginBottom: 16, fontSize: 13 }}>{error}</div>}
-          <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <div className="form-group">
-              <label className="form-label">Email</label>
-              <div style={{ position: 'relative' }}>
-                <FiMail style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-3)' }} size={15} />
-                <input type="email" required className="form-input" style={{ paddingLeft: 38 }} placeholder="admin@email.com" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} />
-              </div>
-            </div>
-            <div className="form-group">
-              <label className="form-label">Password</label>
-              <div style={{ position: 'relative' }}>
-                <FiLock style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-3)' }} size={15} />
-                <input type="password" required className="form-input" style={{ paddingLeft: 38 }} placeholder="••••••••" value={form.password} onChange={e => setForm(p => ({ ...p, password: e.target.value }))} />
-              </div>
-            </div>
-            <button type="submit" disabled={loading} className="btn btn-primary btn-full" style={{ marginTop: 4 }}>
-              {loading ? 'Signing in…' : <><FiShield size={14} /> Sign in as Admin</>}
-            </button>
-          </form>
-          <button onClick={onClose} style={{ width: '100%', marginTop: 10, padding: '8px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--text-3)' }}>Cancel</button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-/* ── MENTOR CARD (mini preview — homepage horizontal scroll) ─────────── */
 function MentorPreviewCard({ mentor }) {
-  const { user, title, company, expertise, photoUrl, rating } = mentor
+  const { user, title, company, expertise, rating, photoUrl } = mentor
   const name = `${user?.firstName || ''} ${user?.lastName || ''}`.trim()
   const initials = `${user?.firstName?.[0] || ''}${user?.lastName?.[0] || ''}`
-  const [imgErr, setImgErr] = React.useState(false)
+  const [imgErr, setImgErr] = useState(false)
   return (
-    <div style={{
-      background: '#fff', borderRadius: 20, border: '1px solid var(--border)',
-      minWidth: 240, maxWidth: 260, display: 'flex', flexDirection: 'column',
-      overflow: 'hidden', transition: 'all .25s', flexShrink: 0,
-    }}
+    <div style={{ background: '#fff', borderRadius: 20, border: '1px solid var(--border)', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%', transition: 'all .25s' }}
       onMouseEnter={e => { e.currentTarget.style.boxShadow = 'var(--sh-xl)'; e.currentTarget.style.transform = 'translateY(-4px)' }}
-      onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)' }}
-    >
-      {/* Band */}
-      <div style={{ height: 56, background: 'linear-gradient(135deg,#0D1628,#1E3A8A)', flexShrink: 0 }} />
-      {/* Avatar */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 20px 16px', marginTop: -32 }}>
+      onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)' }}>
+      <div style={{ height: 5, background: 'linear-gradient(90deg,var(--primary),var(--maroon))' }} />
+      <div style={{ padding: '20px 20px 0', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
         {photoUrl && !imgErr
-          ? <img src={photoUrl} alt={name} onError={() => setImgErr(true)} style={{ width: 64, height: 64, minWidth: 64, borderRadius: '50%', objectFit: 'cover', border: '3px solid #fff', boxShadow: 'var(--sh)' }} />
-          : <div style={{ width: 64, height: 64, minWidth: 64, borderRadius: '50%', background: 'var(--grad-brand)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 22, border: '3px solid #fff', boxShadow: 'var(--sh)' }}>{initials}</div>
-        }
-        <h4 style={{ fontSize: 14, fontWeight: 700, marginTop: 10, marginBottom: 2, textAlign: 'center' }}>{name}</h4>
-        {title && <p style={{ fontSize: 11, color: 'var(--text-3)', marginBottom: 2, textAlign: 'center', lineHeight: 1.4 }}>{title}</p>}
-        {company && <p style={{ fontSize: 10, color: 'var(--text-4)', textAlign: 'center' }}>{company}</p>}
+          ? <img src={photoUrl} alt={name} onError={() => setImgErr(true)} style={{ width: 60, height: 60, minWidth: 60, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+          : <div style={{ width: 60, height: 60, minWidth: 60, borderRadius: '50%', background: 'linear-gradient(135deg,var(--primary),var(--maroon))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 20, flexShrink: 0 }}>{initials}</div>}
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</h3>
+          {title && <p style={{ fontSize: 12, color: 'var(--primary)', fontWeight: 600, marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{title}</p>}
+          {company && <p style={{ fontSize: 11, color: 'var(--text-3)', display: 'flex', alignItems: 'center', gap: 4 }}><FiBriefcase size={10} /> {company}</p>}
+        </div>
+      </div>
+      <div style={{ padding: '12px 20px', flex: 1 }}>
         {expertise?.length > 0 && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, justifyContent: 'center', marginTop: 10 }}>
-            {expertise.slice(0, 3).map(e => <span key={e} className="chip" style={{ fontSize: 10, padding: '3px 9px' }}>{e}</span>)}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+            {expertise.slice(0, 3).map(e => <span key={e} className="chip" style={{ fontSize: 11 }}>{e}</span>)}
+            {expertise.length > 3 && <span className="chip chip-gray" style={{ fontSize: 11 }}>+{expertise.length - 3}</span>}
           </div>
         )}
       </div>
-      <div style={{ padding: '10px 16px', borderTop: '1px solid var(--border)', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
-        <span style={{ fontSize: 11, color: 'var(--text-3)', display: 'flex', alignItems: 'center', gap: 3 }}>
-          <FiStar size={11} style={{ color: 'var(--gold-b)' }} /> {rating > 0 ? rating.toFixed(1) : 'New'}
+      <div style={{ padding: '12px 20px', borderTop: '1px solid var(--border)', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ fontSize: 12, color: 'var(--text-3)', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <FiStar size={11} style={{ color: '#F59E0B' }} /> {rating > 0 ? rating.toFixed(1) : 'New'}
         </span>
-        <Link to={`/mentors/${user?.id}`} className="btn btn-primary btn-xs btn-pill">Book →</Link>
+        <Link to={`/mentors/${user?.id}`} className="btn btn-primary btn-sm btn-pill" style={{ fontSize: 12, padding: '6px 14px', gap: 5 }}>
+          Book <FiArrowRight size={11} />
+        </Link>
       </div>
     </div>
   )
 }
 
-/* ── PERSON CARD (team / advisor) ─────────────── */
 function PersonCard({ person }) {
+  const [imgErr, setImgErr] = useState(false)
   return (
-    <div style={{
-      background: '#fff', borderRadius: 20, border: '1px solid var(--border)',
-      overflow: 'hidden', transition: 'all .25s', display: 'flex', flexDirection: 'column',
-    }}
+    <div style={{ background: '#fff', borderRadius: 20, border: '1px solid var(--border)', padding: '28px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', height: '100%', transition: 'all .25s' }}
       onMouseEnter={e => { e.currentTarget.style.boxShadow = 'var(--sh-xl)'; e.currentTarget.style.transform = 'translateY(-4px)' }}
-      onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)' }}
-    >
-      {/* Coloured cover band */}
-      <div style={{ height: 80, background: person.gradient, flexShrink: 0 }} />
-      {/* Body */}
-      <div style={{ padding: '0 24px 24px', textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column' }}>
-        {/* Avatar — pushed up over the band */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: -40, marginBottom: 12 }}>
-          <div style={{
-            width: 80, height: 80, minWidth: 80,
-            borderRadius: '50%',
-            background: person.gradient,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#fff', fontWeight: 800, fontSize: 26,
-            border: '4px solid #fff',
-            boxShadow: '0 8px 24px rgba(8,14,29,.15)',
-          }}>
-            {person.initials}
-          </div>
+      onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)' }}>
+      {person.photoUrl && !imgErr
+        ? <img src={person.photoUrl} alt={person.name} onError={() => setImgErr(true)} style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', marginBottom: 16 }} />
+        : <div style={{ width: 80, height: 80, borderRadius: '50%', background: person.gradient || 'var(--grad-brand)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 26, marginBottom: 16 }}>{person.initials}</div>}
+      <h3 style={{ fontWeight: 700, fontSize: 16, marginBottom: 4 }}>{person.name}</h3>
+      <p style={{ fontSize: 13, color: 'var(--primary)', fontWeight: 600, marginBottom: 6 }}>{person.role}</p>
+      {person.company && <p style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 4 }}>{person.company}</p>}
+      {person.location && <p style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 10 }}>{person.location}</p>}
+      {person.bio && <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6, marginBottom: 14, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{person.bio}</p>}
+      {person.tags?.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, justifyContent: 'center', marginBottom: 14 }}>
+          {person.tags.slice(0, 3).map(t => <span key={t} className="chip" style={{ fontSize: 11 }}>{t}</span>)}
         </div>
-
-        <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 3 }}>{person.name}</h3>
-        <p style={{ fontSize: 13, color: 'var(--primary)', fontWeight: 600, marginBottom: 4 }}>{person.role}</p>
-        {person.company && <p style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 6 }}>{person.company}</p>}
-        {person.location && <p style={{ fontSize: 11, color: 'var(--text-4)', marginBottom: 10 }}>📍 {person.location}</p>}
-
-        {person.bio && (
-          <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.65, marginBottom: 14 }}>{person.bio}</p>
-        )}
-
-        {person.tags?.length > 0 && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, justifyContent: 'center', marginBottom: 12 }}>
-            {person.tags.map(t => <span key={t} className="chip chip-gray" style={{ fontSize: 11 }}>{t}</span>)}
-          </div>
-        )}
-
-        {person.followers && (
-          <p style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 14 }}>
-            <strong style={{ color: 'var(--text)' }}>{person.followers}+</strong> LinkedIn followers
-          </p>
-        )}
-
-        <div style={{ marginTop: 'auto', paddingTop: 14 }}>
-          <a
-            href={person.linkedin || '#'}
-            target={person.linkedin && person.linkedin !== '#' ? '_blank' : undefined}
-            rel="noreferrer"
-            className="btn btn-outline btn-sm btn-full btn-pill"
-            style={{ gap: 7 }}
-          >
-            <FiLinkedin size={14} /> View Profile
-          </a>
-        </div>
-      </div>
+      )}
+      {person.linkedinUrl && person.linkedinUrl !== '#' && (
+        <a href={person.linkedinUrl} target="_blank" rel="noreferrer" style={{ marginTop: 'auto', display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--primary)', fontSize: 13, fontWeight: 600 }}>
+          <FiLinkedin size={14} /> Connect
+        </a>
+      )}
     </div>
   )
 }
 
-/* ── MAIN HOME PAGE ────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════ */
 export default function Home() {
-  const { user } = useAuth()
   const [mentors, setMentors] = useState([])
   const [advisors, setAdvisors] = useState([])
   const [cofounders, setCofounders] = useState([])
-  const [adminModal, setAdminModal] = useState(false)
-  const scrollRef = useRef(null)
+  const [testimonials, setTestimonials] = useState([])
+  const [faqs, setFaqs] = useState([])
+  const [siteConfig, setSiteConfig] = useState({})
+  const [activeTab, setActiveTab] = useState('mentee')
 
   useEffect(() => {
     api.get('/mentors').then(r => setMentors(r.data.slice(0, 6))).catch(() => {})
     api.get('/advisors').then(r => setAdvisors(r.data)).catch(() => {})
     api.get('/cofounders').then(r => setCofounders(r.data)).catch(() => {})
-  }, [])
-
-  // horizontal scroll drag
-  useEffect(() => {
-    const el = scrollRef.current; if (!el) return
-    let isDown = false, startX, scrollLeft
-    const down = e => { isDown = true; el.style.cursor = 'grabbing'; startX = (e.pageX || e.touches?.[0]?.pageX) - el.offsetLeft; scrollLeft = el.scrollLeft }
-    const up = () => { isDown = false; el.style.cursor = 'grab' }
-    const move = e => { if (!isDown) return; e.preventDefault(); const x = (e.pageX || e.touches?.[0]?.pageX) - el.offsetLeft; el.scrollLeft = scrollLeft - (x - startX) * 1.5 }
-    el.addEventListener('mousedown', down); el.addEventListener('mouseleave', up); el.addEventListener('mouseup', up); el.addEventListener('mousemove', move)
-    return () => { el.removeEventListener('mousedown', down); el.removeEventListener('mouseleave', up); el.removeEventListener('mouseup', up); el.removeEventListener('mousemove', move) }
+    api.get('/testimonials').then(r => setTestimonials(r.data)).catch(() => {})
+    api.get('/faqs').then(r => setFaqs(r.data)).catch(() => {})
+    api.get('/site-config').then(r => setSiteConfig(r.data)).catch(() => {})
   }, [])
 
   return (
-    <div>
-      {adminModal && <AdminLoginModal onClose={() => setAdminModal(false)} />}
+    <div style={{ background: 'var(--bg)' }}>
 
-      {/* ── HERO ── */}
-      <section style={{ background: 'var(--grad-hero)', minHeight: 'calc(100vh - 68px)', display: 'flex', alignItems: 'center', position: 'relative', overflow: 'hidden', paddingTop: 40, paddingBottom: 60 }}>
-        {/* Background orbs */}
-        <div style={{ position: 'absolute', top: '15%', left: '-5%', width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle,rgba(37,99,235,.18) 0%,transparent 70%)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: '10%', right: '-5%', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle,rgba(136,19,55,.15) 0%,transparent 70%)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 800, height: 800, borderRadius: '50%', background: 'radial-gradient(circle,rgba(201,146,11,.04) 0%,transparent 70%)', pointerEvents: 'none' }} />
-
-        {/* Grid overlay */}
-        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px)', backgroundSize: '60px 60px', pointerEvents: 'none' }} />
-
-        <div className="container" style={{ position: 'relative', zIndex: 1, width: '100%' }}>
-          <div style={{ maxWidth: 780 }}>
-            <div className="section-label section-label-dark" style={{ marginBottom: 28 }}>
-              <FiZap size={12} /> Structured Mentorship Programme
-            </div>
-
-            <h1 className="display-1" style={{ color: '#fff', marginBottom: 24 }}>
-              Nurturing the<br />
-              <span style={{ background: 'linear-gradient(90deg,#F59E0B,#FBBF24)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Next Generation</span><br />
-              of Leaders
-            </h1>
-
-            <p style={{ fontSize: 18, color: 'rgba(255,255,255,.7)', lineHeight: 1.75, maxWidth: 560, marginBottom: 40 }}>
-              Connect with senior industry leaders for invaluable career guidance, personalised roadmaps, and networking opportunities that shape your future.
-            </p>
-
-            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 60 }}>
-              <Link to="/register" className="btn btn-gold btn-xl btn-pill">
-                Start Your Journey <FiArrowRight />
-              </Link>
-              <Link to="/mentors" className="btn btn-glass btn-xl btn-pill">
-                Meet the Mentors
-              </Link>
-            </div>
-
-            {/* Stats */}
-            <div style={{ display: 'flex', gap: 40, flexWrap: 'wrap' }}>
-              {STATS.map(s => (
-                <div key={s.lbl} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  <span style={{ fontSize: 28, fontWeight: 900, color: '#fff', letterSpacing: '-.02em' }}>{s.val}</span>
-                  <span style={{ fontSize: 12, color: 'rgba(255,255,255,.5)', fontWeight: 500 }}>{s.lbl}</span>
-                </div>
-              ))}
-            </div>
+      {/* ══ HERO ══════════════════════════════════════════════════════ */}
+      <section style={{ background: 'linear-gradient(135deg,#020817 0%,#0F1F3D 45%,#1A0A1A 75%,#2D0516 100%)', color: '#fff', padding: 'clamp(72px,10vw,120px) 0 clamp(80px,12vw,140px)', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: '-10%', right: '-5%', width: 500, height: 500, background: 'radial-gradient(circle,rgba(37,99,235,.25),transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '-15%', left: '-8%', width: 400, height: 400, background: 'radial-gradient(circle,rgba(136,19,55,.2),transparent 70%)', pointerEvents: 'none' }} />
+        <div className="container" style={{ position: 'relative', zIndex: 2, textAlign: 'center' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.15)', borderRadius: 100, padding: '6px 16px', marginBottom: 28, backdropFilter: 'blur(8px)' }}>
+            <FiStar size={12} style={{ color: '#F59E0B' }} />
+            <span style={{ fontSize: 13, color: 'rgba(255,255,255,.85)', fontWeight: 500 }}>Structured · Personalised · Certified</span>
           </div>
-
-          {/* Admin quick access — bottom right */}
-          {!user && (
-            <button onClick={() => setAdminModal(true)}
-              style={{ position: 'absolute', bottom: -20, right: 0, display: 'flex', alignItems: 'center', gap: 7, padding: '8px 16px', background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.12)', borderRadius: 100, cursor: 'pointer', color: 'rgba(255,255,255,.45)', fontSize: 12, fontWeight: 500, transition: 'all .2s' }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,.1)'; e.currentTarget.style.color = 'rgba(255,255,255,.75)' }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,.06)'; e.currentTarget.style.color = 'rgba(255,255,255,.45)' }}>
-              <FiShield size={12} /> Admin Portal
-            </button>
-          )}
-        </div>
-      </section>
-
-      {/* ── HOW IT WORKS ── */}
-      <section className="section" style={{ background: '#fff' }}>
-        <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: 64 }}>
-            <div className="section-label section-label-blue" style={{ margin: '0 auto 20px' }}>Our Process</div>
-            <h2 className="h1" style={{ marginBottom: 14 }}>Four Sessions.<br /><span className="text-gradient">Transformative Results.</span></h2>
-            <p className="lead" style={{ maxWidth: 500, margin: '0 auto' }}>A structured programme designed to build clarity, direction, and momentum in your career.</p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(240px,1fr))', gap: 2, position: 'relative' }}>
-            {/* Connecting line */}
-            <div style={{ position: 'absolute', top: 40, left: '12.5%', right: '12.5%', height: 2, background: 'linear-gradient(90deg,var(--primary-l),var(--maroon-l),var(--gold-l),transparent)', zIndex: 0, borderRadius: 4 }} className="hide-md" />
-
-            {STEPS.map((step, i) => (
-              <div key={i} style={{ position: 'relative', zIndex: 1, padding: '0 12px', textAlign: 'center' }}>
-                {/* Number + icon */}
-                <div style={{ width: 80, height: 80, borderRadius: '50%', background: '#fff', border: '2px solid var(--border)', margin: '0 auto 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--sh-lg)', position: 'relative' }}>
-                  <div style={{ position: 'absolute', top: -8, right: -2, background: i % 2 === 0 ? 'var(--primary)' : 'var(--maroon)', color: '#fff', fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 100, letterSpacing: '.04em' }}>{step.num}</div>
-                  <span style={{ fontSize: 22, color: i % 2 === 0 ? 'var(--primary)' : 'var(--maroon)' }}>{step.icon}</span>
-                </div>
-                <h4 className="h4" style={{ marginBottom: 10, fontSize: 15 }}>{step.title}</h4>
-                <p style={{ fontSize: 13, color: 'var(--text-3)', lineHeight: 1.65 }}>{step.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── OUTCOMES (dark section) ── */}
-      <section className="section" style={{ background: 'var(--navy)', color: '#fff' }}>
-        <div className="container">
-          <div className="layout-outcomes">
-            <div>
-              <div className="section-label section-label-gold" style={{ marginBottom: 20 }}>Outcomes</div>
-              <h2 className="h1" style={{ color: '#fff', marginBottom: 20 }}>
-                What You'll<br />
-                <span style={{ background: 'var(--grad-gold)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Walk Away With</span>
-              </h2>
-              <p style={{ color: 'rgba(255,255,255,.6)', fontSize: 16, lineHeight: 1.75, marginBottom: 36 }}>
-                More than a mentorship programme — a structured toolkit that equips you to navigate your career with confidence and clarity.
-              </p>
-              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                <Link to="/register" className="btn btn-gold btn-lg btn-pill">Join the Programme <FiArrowRight /></Link>
-                <Link to="/pricing" className="btn btn-glass btn-lg btn-pill">View Pricing</Link>
-              </div>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {OUTCOMES.map((o, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 14, padding: '16px 20px', background: 'rgba(255,255,255,.04)', borderRadius: 12, border: '1px solid rgba(255,255,255,.07)', transition: 'all .2s' }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,.07)'; e.currentTarget.style.borderColor = 'rgba(245,158,11,.25)' }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,.07)' }}>
-                  <FiCheckCircle size={17} style={{ color: 'var(--gold-b)', flexShrink: 0, marginTop: 1 }} />
-                  <span style={{ fontSize: 14, color: 'rgba(255,255,255,.85)', lineHeight: 1.5 }}>{o}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── MENTOR SHOWCASE ── */}
-      {mentors.length > 0 && (
-        <section className="section" style={{ background: 'var(--bg)' }}>
-          <div className="container">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40, flexWrap: 'wrap', gap: 16 }}>
-              <div>
-                <div className="section-label section-label-maroon" style={{ marginBottom: 14 }}>Our Mentors</div>
-                <h2 className="h1">Learn from <span className="text-gold">Industry Leaders</span></h2>
-                <p className="caption" style={{ marginTop: 8 }}>Drag to explore · Click to book</p>
-              </div>
-              <Link to="/mentors" className="btn btn-outline btn-pill hide-md">View All Mentors <FiArrowRight /></Link>
-            </div>
-
-            <div ref={scrollRef} style={{ display: 'flex', gap: 20, overflowX: 'auto', paddingBottom: 12, cursor: 'grab', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
-              <style>{`.scrollhide::-webkit-scrollbar{display:none}`}</style>
-              {mentors.map(m => <MentorPreviewCard key={m.id} mentor={m} />)}
-            </div>
-
-            <div style={{ textAlign: 'center', marginTop: 32 }}>
-              <Link to="/mentors" className="btn btn-outline btn-pill">View All Mentors <FiArrowRight /></Link>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── TEAM ── */}
-      {cofounders.length > 0 && (
-        <section className="section" style={{ background: '#fff' }}>
-          <div className="container">
-            <div style={{ textAlign: 'center', marginBottom: 56 }}>
-              <div className="section-label section-label-blue" style={{ margin: '0 auto 16px' }}>The Team</div>
-              <h2 className="h1">The Founders Behind <span className="text-gradient">Mentor Rise</span></h2>
-              <p className="lead" style={{ maxWidth: 460, margin: '16px auto 0' }}>
-                Visionaries committed to bridging the gap between ambition and achievement.
-              </p>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 28, maxWidth: 680, margin: '0 auto' }}>
-              {cofounders.map(c => (
-                <PersonCard key={c.id} type="team" person={{
-                  name: c.name, initials: c.initials, role: c.role,
-                  bio: c.bio, gradient: c.gradient, linkedin: c.linkedinUrl,
-                }} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── ADVISORS ── */}
-      {advisors.length > 0 && (
-        <section className="section" style={{ background: 'linear-gradient(180deg,var(--bg) 0%,var(--bg-2) 100%)' }}>
-          <div className="container">
-            <div style={{ textAlign: 'center', marginBottom: 56 }}>
-              <div className="section-label section-label-gold" style={{ margin: '0 auto 16px' }}>Advisors</div>
-              <h2 className="h1">Guided by <span className="text-gold">Senior Industry Leaders</span></h2>
-              <p className="lead" style={{ maxWidth: 500, margin: '16px auto 0' }}>
-                Our advisors bring decades of cross-industry experience to guide the programme's direction and quality.
-              </p>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 28, maxWidth: 800, margin: '0 auto' }}>
-              {advisors.map(a => (
-                <PersonCard key={a.id} type="advisor" person={{
-                  name: a.name, initials: a.initials, role: a.role,
-                  company: a.company, location: a.location, bio: a.bio,
-                  tags: Array.isArray(a.tags) ? a.tags : (typeof a.tags === 'string' ? JSON.parse(a.tags || '[]') : []),
-                  followers: a.followers,
-                  gradient: a.gradient, linkedin: a.linkedinUrl,
-                }} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── WHY BECOME A MENTOR ── */}
-      <section className="section" style={{ background: 'var(--navy)' }}>
-        <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: 60 }}>
-            <div className="section-label section-label-dark" style={{ margin: '0 auto 18px' }}>
-              <FiHeart size={12} /> For Mentors
-            </div>
-            <h2 className="h1" style={{ color: '#fff', marginBottom: 14 }}>
-              Why Senior Leaders <span style={{ background: 'var(--grad-gold)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Choose to Mentor</span>
-            </h2>
-            <p style={{ color: 'rgba(255,255,255,.6)', fontSize: 16, lineHeight: 1.75, maxWidth: 560, margin: '0 auto 32px' }}>
-              Mentorship is not charity — it's one of the most professionally and personally rewarding things a leader can do. Here's why the best in the industry give their time.
-            </p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(320px,1fr))', gap: 20 }}>
-            {MENTOR_REASONS.map((r, i) => (
-              <div key={i} style={{
-                padding: '24px 26px',
-                background: 'rgba(255,255,255,.04)',
-                border: '1px solid rgba(255,255,255,.08)',
-                borderRadius: 16,
-                transition: 'all .25s',
-              }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,.07)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,.16)'; e.currentTarget.style.transform = 'translateY(-3px)' }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,.08)'; e.currentTarget.style.transform = 'translateY(0)' }}>
-                <div style={{
-                  width: 48, height: 48, borderRadius: 12, marginBottom: 18,
-                  background: r.bg, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: r.color,
-                }}>
-                  {r.icon}
-                </div>
-                <h4 style={{ fontSize: 15, fontWeight: 700, color: '#fff', marginBottom: 10, lineHeight: 1.35 }}>{r.title}</h4>
-                <p style={{ fontSize: 13.5, color: 'rgba(255,255,255,.58)', lineHeight: 1.72 }}>{r.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          <div style={{ textAlign: 'center', marginTop: 48 }}>
-            <Link to="/register?role=mentor" className="btn btn-gold btn-lg btn-pill">
-              Apply as a Mentor <FiArrowRight />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── TESTIMONIALS ── */}
-      <section className="section" style={{ background: 'var(--bg)' }}>
-        <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: 56 }}>
-            <div className="section-label section-label-maroon" style={{ margin: '0 auto 18px' }}>
-              <FiMessageSquare size={12} /> Mentee Voices
-            </div>
-            <h2 className="h1" style={{ marginBottom: 14 }}>
-              Real People. <span className="text-gradient">Real Breakthroughs.</span>
-            </h2>
-            <p className="lead" style={{ maxWidth: 500, margin: '0 auto' }}>
-              Don't take our word for it — hear from professionals who've already walked this path.
-            </p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))', gap: 22 }}>
-            {TESTIMONIALS.map((t, i) => (
-              <div key={i} className="card" style={{
-                padding: 28, display: 'flex', flexDirection: 'column', gap: 20,
-                borderTop: `3px solid ${i % 2 === 0 ? 'var(--primary)' : 'var(--maroon)'}`,
-                transition: 'all .25s',
-              }}
-                onMouseEnter={e => { e.currentTarget.style.boxShadow = 'var(--sh-xl)'; e.currentTarget.style.transform = 'translateY(-4px)' }}
-                onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)' }}>
-                {/* Stars */}
-                <div style={{ display: 'flex', gap: 3 }}>
-                  {Array.from({ length: t.rating }).map((_, s) => (
-                    <FiStar key={s} size={14} style={{ fill: 'var(--gold-b)', color: 'var(--gold-b)' }} />
-                  ))}
-                </div>
-
-                {/* Quote */}
-                <p style={{ fontSize: 14.5, color: 'var(--text-2)', lineHeight: 1.78, fontStyle: 'italic', flex: 1 }}>
-                  "{t.quote}"
-                </p>
-
-                {/* Tag */}
-                <span style={{ alignSelf: 'flex-start', padding: '3px 12px', borderRadius: 100, fontSize: 11, fontWeight: 700, background: 'var(--primary-xl)', color: 'var(--primary-d)' }}>
-                  {t.tag}
-                </span>
-
-                {/* Person */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingTop: 16, borderTop: '1px solid var(--border)' }}>
-                  <div className="av-placeholder av-sm" style={{ borderRadius: '50%', background: t.gradient, fontSize: 13, flexShrink: 0 }}>
-                    {t.initials}
-                  </div>
-                  <div>
-                    <p style={{ fontSize: 14, fontWeight: 700, marginBottom: 1 }}>{t.name}</p>
-                    <p style={{ fontSize: 12, color: 'var(--text-3)' }}>{t.role}</p>
-                    <p style={{ fontSize: 11, color: 'var(--text-4)' }}>{t.company}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── FAQs ── */}
-      <section className="section" style={{ background: '#fff' }}>
-        <div className="container">
-          <div className="layout-faq">
-            {/* Left sticky label */}
-            <div style={{ position: 'sticky', top: 100 }}>
-              <div className="section-label section-label-blue" style={{ marginBottom: 20 }}>FAQs</div>
-              <h2 className="h1" style={{ marginBottom: 16 }}>
-                Everything You <span className="text-gradient">Need to Know</span>
-              </h2>
-              <p style={{ color: 'var(--text-3)', fontSize: 15, lineHeight: 1.75, marginBottom: 32 }}>
-                Got a question that's not answered here? We're just a message away.
-              </p>
-              <a href="mailto:hello@mentorrise.in" className="btn btn-outline btn-pill" style={{ gap: 8 }}>
-                <FiMail size={14} /> Ask Us Directly
-              </a>
-            </div>
-
-            {/* Right accordion */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {FAQS.map((faq, i) => <FaqItem key={i} faq={faq} index={i} />)}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── FINAL CTA ── */}
-      <section style={{ background: 'var(--navy)', padding: '80px 0', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundImage: 'radial-gradient(circle at 30% 50%,rgba(37,99,235,.15),transparent 60%),radial-gradient(circle at 70% 50%,rgba(136,19,55,.12),transparent 60%)', pointerEvents: 'none' }} />
-        <div className="container" style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
-          <div className="section-label section-label-dark" style={{ margin: '0 auto 24px' }}><FiZap size={12} /> Limited Spots Available</div>
-          <h2 className="display-2" style={{ color: '#fff', marginBottom: 16, maxWidth: 700, margin: '0 auto 16px' }}>
-            Unlock Your Potential.<br />
-            <span style={{ background: 'var(--grad-gold)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Pave Your Way to Success.</span>
-          </h2>
-          <p style={{ color: 'rgba(255,255,255,.6)', fontSize: 17, marginBottom: 40, maxWidth: 480, margin: '16px auto 40px' }}>
-            Join hundreds of professionals who've charted their path with Mentor Rise.
+          <h1 style={{ fontSize: 'clamp(30px,6vw,60px)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-.03em', marginBottom: 20, maxWidth: 820, margin: '0 auto 20px' }}>
+            Learn from Interaction with<br />
+            <span style={{ background: 'linear-gradient(90deg,#60A5FA,#C084FC,#FB7185)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              Senior Industry Leaders
+            </span>
+          </h1>
+          <p style={{ fontSize: 'clamp(15px,2vw,19px)', color: 'rgba(255,255,255,.72)', maxWidth: 620, margin: '0 auto 36px', lineHeight: 1.75 }}>
+            A structured mentorship programme designed to help you grow personally and professionally through expert guidance.
           </p>
-          <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link to="/register" className="btn btn-gold btn-xl btn-pill">Get Started Free <FiArrowRight /></Link>
-            <Link to="/mentors" className="btn btn-glass btn-xl btn-pill">Meet the Mentors</Link>
+          {/* Checklist */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 24px', justifyContent: 'center', marginBottom: 44 }}>
+            {['Complimentary 15-min introductory session', 'Personalised growth roadmap', '3 structured mentoring sessions', 'Certificate of completion', 'Post-programme feedback'].map(item => (
+              <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, color: 'rgba(255,255,255,.82)' }}>
+                <div style={{ width: 20, height: 20, borderRadius: '50%', background: 'rgba(74,222,128,.2)', border: '1px solid rgba(74,222,128,.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <FiCheck size={11} style={{ color: '#4ADE80' }} />
+                </div>
+                {item}
+              </div>
+            ))}
+          </div>
+          {/* CTAs */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
+            <Link to="/mentors" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--grad-brand)', color: '#fff', padding: '14px 28px', borderRadius: 12, fontWeight: 700, fontSize: 15, textDecoration: 'none', boxShadow: '0 8px 24px rgba(37,99,235,.4)' }}>
+              Find a Mentor <FiArrowRight size={16} />
+            </Link>
+            <button onClick={() => openLink(siteConfig.intro_session_form_url)} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,.1)', color: '#fff', padding: '14px 28px', borderRadius: 12, fontWeight: 700, fontSize: 15, border: '1.5px solid rgba(255,255,255,.2)', cursor: 'pointer', backdropFilter: 'blur(8px)' }}>
+              <FiBookOpen size={16} /> Request Introductory Session
+            </button>
+            <button onClick={() => openLink(siteConfig.mentor_form_url)} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'transparent', color: 'rgba(255,255,255,.8)', padding: '14px 28px', borderRadius: 12, fontWeight: 600, fontSize: 15, border: '1.5px solid rgba(255,255,255,.12)', cursor: 'pointer' }}>
+              Become a Mentor
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ STATS ════════════════════════════════════════════════════ */}
+      <section style={{ background: 'var(--primary)', padding: '20px 0' }}>
+        <div className="container">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 0, justifyContent: 'center', alignItems: 'center' }}>
+            {[['20+', 'Industry Mentors'], ['100+', 'Mentees Enrolled'], ['95%', 'Satisfaction Rate'], ['Free', '15-min Intro Session']].map(([val, label], i, arr) => (
+              <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 24px', borderRight: i < arr.length - 1 ? '1px solid rgba(255,255,255,.2)' : 'none' }}>
+                <span style={{ fontSize: 22, fontWeight: 900, color: '#fff', letterSpacing: '-.02em' }}>{val}</span>
+                <span style={{ fontSize: 13, color: 'rgba(255,255,255,.8)' }}>{label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══ WHY CHOOSE ═══════════════════════════════════════════════ */}
+      <section style={{ padding: 'clamp(64px,8vw,100px) 0', background: 'var(--bg)' }}>
+        <div className="container">
+          <SectionHeading tag="Our Advantage" title="Why Choose Our Mentorship Programme?" subtitle="We bring together the right mentors, structure, and support to help you grow at every stage of your career." />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 20 }}>
+            {WHY_ITEMS.map(item => (
+              <div key={item.title} style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--border)', padding: '24px 20px', display: 'flex', gap: 16, alignItems: 'flex-start', transition: 'all .2s' }}
+                onMouseEnter={e => { e.currentTarget.style.boxShadow = 'var(--sh-md)'; e.currentTarget.style.borderColor = 'rgba(37,99,235,.2)' }}
+                onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--border)' }}>
+                <div style={{ width: 44, height: 44, borderRadius: 12, background: 'var(--primary-xl)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', fontSize: 20, flexShrink: 0 }}>{item.icon}</div>
+                <div>
+                  <h3 style={{ fontWeight: 700, fontSize: 15, marginBottom: 6 }}>{item.title}</h3>
+                  <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.65 }}>{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══ HOW IT WORKS ═════════════════════════════════════════════ */}
+      <section id="how-it-works" style={{ padding: 'clamp(64px,8vw,100px) 0', background: 'linear-gradient(135deg,#0F1F3D,#1E0A2E)' }}>
+        <div className="container">
+          <SectionHeading tag="The Journey" title="How It Works" subtitle="A clear 7-step process designed to maximise your mentorship experience." light />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: 20 }}>
+            {STEPS.map(step => (
+              <div key={step.n} style={{ background: 'rgba(255,255,255,.06)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,.1)', borderRadius: 20, padding: '28px 24px', transition: 'all .2s' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,.1)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,.2)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,.06)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,.1)' }}>
+                <div style={{ fontSize: 12, fontWeight: 800, color: 'rgba(255,255,255,.35)', letterSpacing: '.1em', marginBottom: 12 }}>STEP {step.n}</div>
+                <h3 style={{ fontSize: 17, fontWeight: 800, color: '#fff', marginBottom: 10 }}>{step.title}</h3>
+                <p style={{ fontSize: 13, color: 'rgba(255,255,255,.65)', lineHeight: 1.7 }}>{step.desc}</p>
+              </div>
+            ))}
+          </div>
+          <div style={{ textAlign: 'center', marginTop: 44 }}>
+            <button onClick={() => openLink(siteConfig.mentee_form_url)} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'white', color: 'var(--primary)', padding: '14px 32px', borderRadius: 12, fontWeight: 700, fontSize: 15, border: 'none', cursor: 'pointer', boxShadow: '0 8px 24px rgba(0,0,0,.2)' }}>
+              Apply Now <FiArrowRight size={16} />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ ABOUT THE PROGRAMME ══════════════════════════════════════ */}
+      <section id="about" style={{ padding: 'clamp(64px,8vw,100px) 0', background: '#fff' }}>
+        <div className="container">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 56, alignItems: 'center' }}>
+            <div>
+              <span style={{ display: 'inline-block', background: 'var(--primary-xl)', color: 'var(--primary)', padding: '4px 14px', borderRadius: 100, fontSize: 12, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: 16 }}>About the Programme</span>
+              <h2 style={{ fontSize: 'clamp(24px,4vw,36px)', fontWeight: 800, lineHeight: 1.2, letterSpacing: '-.02em', marginBottom: 20 }}>Bridging Ambition with<br /><span style={{ color: 'var(--primary)' }}>Industry Excellence</span></h2>
+              <p style={{ fontSize: 15, color: 'var(--text-2)', lineHeight: 1.85, marginBottom: 20 }}>
+                MentorRise is a structured mentorship programme designed to bridge the gap between ambitious professionals and seasoned industry leaders. We believe that meaningful mentorship can transform careers, spark innovation, and build lasting professional relationships.
+              </p>
+              <p style={{ fontSize: 15, color: 'var(--text-2)', lineHeight: 1.85, marginBottom: 32 }}>
+                Our programme is built on three pillars: the right mentor match, a structured engagement framework, and continuous support, so every mentee gets the most out of every session.
+              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+                <button onClick={() => openLink(siteConfig.mentee_form_url)} className="btn btn-primary" style={{ gap: 8 }}>Apply as Mentee <FiArrowRight size={14} /></button>
+                <button onClick={() => openLink(siteConfig.mentor_form_url)} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'transparent', color: 'var(--primary)', padding: '10px 20px', borderRadius: 10, fontWeight: 600, fontSize: 14, border: '1.5px solid var(--primary)', cursor: 'pointer' }}>
+                  Become a Mentor
+                </button>
+              </div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              {[['20+', 'Industry Mentors', 'var(--primary)'], ['100+', 'Mentees', 'var(--maroon)'], ['300+', 'Sessions', '#065F46'], ['95%', 'Success Rate', '#92400E']].map(([val, label, color]) => (
+                <div key={label} style={{ background: 'var(--bg)', borderRadius: 16, padding: '24px 20px', textAlign: 'center', border: '1px solid var(--border)' }}>
+                  <div style={{ fontSize: 36, fontWeight: 900, color, letterSpacing: '-.03em', marginBottom: 4 }}>{val}</div>
+                  <div style={{ fontSize: 13, color: 'var(--text-3)', fontWeight: 500 }}>{label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ WHY MENTORSHIP ═══════════════════════════════════════════ */}
+      <section style={{ padding: 'clamp(64px,8vw,100px) 0', background: 'var(--bg)' }}>
+        <div className="container" style={{ maxWidth: 860 }}>
+          <SectionHeading tag="Our Belief" title="Why Mentorship?" />
+          <div style={{ background: '#fff', borderRadius: 24, border: '1px solid var(--border)', padding: 'clamp(28px,4vw,48px)' }}>
+            <p style={{ fontSize: 15, color: 'var(--text-2)', lineHeight: 1.9, marginBottom: 20 }}>
+              Mentorship has been proven to accelerate professional growth by providing guided experience, exposure to real-world challenges, and access to expansive professional networks.
+            </p>
+            <p style={{ fontSize: 15, color: 'var(--text-2)', lineHeight: 1.9, marginBottom: 20 }}>
+              In today's fast-moving landscape, having someone who has been there, navigated the same crossroads, and learned the hard lessons can be the single biggest advantage in your career.
+            </p>
+            <p style={{ fontSize: 15, color: 'var(--text-2)', lineHeight: 1.9 }}>
+              Our programme is designed for those who want to go further, faster, with the right support system. Whether you are a fresh graduate looking for your first direction or a mid-career professional seeking your next breakthrough, MentorRise provides the structure, mentors, and accountability to help you get there.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ OBJECTIVES + KEY TAKEAWAYS ═══════════════════════════════ */}
+      <section style={{ padding: 'clamp(64px,8vw,100px) 0', background: '#fff' }}>
+        <div className="container">
+          <SectionHeading tag="Programme Design" title="Objectives & Key Takeaways" subtitle="What we aim to deliver and what you will walk away with." />
+          <div className="layout-2col">
+            <div style={{ background: 'var(--primary)', borderRadius: 24, padding: '32px 28px' }}>
+              <h3 style={{ fontSize: 20, fontWeight: 800, color: '#fff', marginBottom: 24 }}>Programme Objectives</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                {OBJECTIVES.map((obj, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                    <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(255,255,255,.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 }}>
+                      <span style={{ fontSize: 11, fontWeight: 800, color: '#fff' }}>{i + 1}</span>
+                    </div>
+                    <p style={{ fontSize: 14, color: 'rgba(255,255,255,.88)', lineHeight: 1.65 }}>{obj}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{ background: 'linear-gradient(135deg,#1A0A1A,#2D0516)', borderRadius: 24, padding: '32px 28px' }}>
+              <h3 style={{ fontSize: 20, fontWeight: 800, color: '#fff', marginBottom: 24 }}>Key Takeaways</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                {TAKEAWAYS.map((item, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                    <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(251,113,133,.2)', border: '1px solid rgba(251,113,133,.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 }}>
+                      <FiCheck size={11} style={{ color: '#FB7185' }} />
+                    </div>
+                    <p style={{ fontSize: 14, color: 'rgba(255,255,255,.88)', lineHeight: 1.65 }}>{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ FOR MENTEES + FOR MENTORS (tabbed) ═══════════════════════ */}
+      <section id="for-mentees" style={{ padding: 'clamp(64px,8vw,100px) 0', background: 'var(--bg)' }}>
+        <div className="container">
+          <SectionHeading tag="Who Is This For?" title="For Mentees & Mentors" subtitle="MentorRise is built for ambitious professionals at every stage, and for leaders who want to give back." />
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 0, marginBottom: 40, background: 'var(--border)', borderRadius: 12, padding: 4, width: 'fit-content', margin: '0 auto 40px' }}>
+            {['mentee', 'mentor'].map(tab => (
+              <button key={tab} onClick={() => setActiveTab(tab)} style={{ padding: '10px 28px', borderRadius: 10, border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 14, transition: 'all .2s', background: activeTab === tab ? '#fff' : 'transparent', color: activeTab === tab ? 'var(--primary)' : 'var(--text-3)', boxShadow: activeTab === tab ? 'var(--sh-sm)' : 'none' }}>
+                {tab === 'mentee' ? 'For Mentees' : 'For Mentors'}
+              </button>
+            ))}
           </div>
 
-          {/* Admin access bottom */}
-          {!user && (
-            <button onClick={() => setAdminModal(true)}
-              style={{ marginTop: 48, display: 'inline-flex', alignItems: 'center', gap: 7, padding: '9px 20px', background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.1)', borderRadius: 100, cursor: 'pointer', color: 'rgba(255,255,255,.35)', fontSize: 12, transition: 'all .2s' }}
-              onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,.6)'}
-              onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,.35)'}>
-              <FiShield size={12} /> Admin Portal Access
-            </button>
+          {activeTab === 'mentee' && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 24 }}>
+              <div className="card" style={{ padding: '28px 24px' }}>
+                <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, color: 'var(--primary)' }}>Who Can Apply?</h3>
+                {['Working professionals seeking career growth and direction', 'Fresh graduates looking for their first career breakthrough', 'Students preparing for industry entry and skill development', 'Anyone seeking personalised guidance from industry experts'].map(item => (
+                  <div key={item} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 12 }}>
+                    <FiCheck size={14} style={{ color: 'var(--success)', marginTop: 2, flexShrink: 0 }} />
+                    <p style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.6 }}>{item}</p>
+                  </div>
+                ))}
+                <button onClick={() => openLink(siteConfig.mentee_form_url)} className="btn btn-primary btn-full" style={{ marginTop: 20, gap: 8 }}>Apply as Mentee <FiArrowRight size={14} /></button>
+              </div>
+              <div className="card" style={{ padding: '28px 24px' }}>
+                <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, color: 'var(--primary)' }}>What's in it for You?</h3>
+                {['One-on-one guidance from a senior industry expert', 'Complimentary 15-min intro session before committing', 'A structured path to achieve your career goals', 'Certificate and formal recognition of participation', 'Post-programme feedback to guide your next steps'].map(item => (
+                  <div key={item} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 12 }}>
+                    <FiStar size={13} style={{ color: '#F59E0B', marginTop: 2, flexShrink: 0 }} />
+                    <p style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.6 }}>{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
+
+          {activeTab === 'mentor' && (
+            <div id="for-mentors" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 24 }}>
+              <div className="card" style={{ padding: '28px 24px' }}>
+                <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, color: 'var(--maroon)' }}>Why Become a Mentor?</h3>
+                {['Give back to the professional community meaningfully', 'Develop leadership, coaching, and communication skills', 'Expand your professional network and influence', 'Gain recognition as a thought leader in your field'].map(item => (
+                  <div key={item} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 12 }}>
+                    <FiCheck size={14} style={{ color: 'var(--success)', marginTop: 2, flexShrink: 0 }} />
+                    <p style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.6 }}>{item}</p>
+                  </div>
+                ))}
+                <button onClick={() => openLink(siteConfig.mentor_form_url)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'var(--maroon)', color: '#fff', padding: '12px 20px', borderRadius: 10, fontWeight: 700, fontSize: 14, border: 'none', cursor: 'pointer', width: '100%', marginTop: 20 }}>
+                  Become a Mentor <FiArrowRight size={14} />
+                </button>
+              </div>
+              <div className="card" style={{ padding: '28px 24px' }}>
+                <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, color: 'var(--maroon)' }}>Additional Opportunities</h3>
+                {['Speaking opportunities at programme events', 'Collaboration with other industry leaders', 'Featured recognition on the MentorRise platform', 'Shape the careers of the next generation of leaders', 'Build a legacy of impact through mentorship'].map(item => (
+                  <div key={item} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 12 }}>
+                    <FiStar size={13} style={{ color: '#F59E0B', marginTop: 2, flexShrink: 0 }} />
+                    <p style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.6 }}>{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ══ DO'S & DON'TS ════════════════════════════════════════════ */}
+      <section style={{ padding: 'clamp(64px,8vw,100px) 0', background: '#fff' }}>
+        <div className="container">
+          <SectionHeading tag="Guidelines" title="Do's & Don'ts" subtitle="Guidelines to ensure every mentorship session is productive, respectful, and impactful." />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 20 }}>
+            {[
+              { title: "Mentee Do's", items: MENTEE_DOS, bg: '#F0FDF4', border: 'rgba(5,150,105,.2)', headColor: '#065F46', dotColor: '#059669', textColor: '#047857', icon: '✓' },
+              { title: "Mentee Don'ts", items: MENTEE_DONTS, bg: '#FFF5F5', border: 'rgba(220,38,38,.15)', headColor: '#991B1B', dotColor: '#DC2626', textColor: '#B91C1C', icon: '✕' },
+              { title: "Mentor Do's", items: MENTOR_DOS, bg: '#EFF6FF', border: 'rgba(37,99,235,.2)', headColor: '#1E3A8A', dotColor: '#2563EB', textColor: '#1D4ED8', icon: '✓' },
+              { title: "Mentor Don'ts", items: MENTOR_DONTS, bg: '#FFF1F4', border: 'rgba(136,19,55,.15)', headColor: '#881337', dotColor: '#BE185D', textColor: '#9D174D', icon: '✕' },
+            ].map(col => (
+              <div key={col.title} style={{ borderRadius: 20, border: `1px solid ${col.border}`, background: col.bg, padding: '28px 24px' }}>
+                <h3 style={{ fontSize: 15, fontWeight: 800, color: col.headColor, marginBottom: 20 }}>{col.icon} {col.title}</h3>
+                {col.items.map(item => (
+                  <div key={item} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 12 }}>
+                    <div style={{ width: 6, height: 6, borderRadius: '50%', background: col.dotColor, marginTop: 7, flexShrink: 0 }} />
+                    <p style={{ fontSize: 13, color: col.textColor, lineHeight: 1.65 }}>{item}</p>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══ MENTOR PREVIEW ═══════════════════════════════════════════ */}
+      {mentors.length > 0 && (
+        <section style={{ padding: 'clamp(64px,8vw,100px) 0', background: 'var(--bg)' }}>
+          <div className="container">
+            <SectionHeading tag="Our Mentors" title="Meet the Leaders Behind MentorRise" subtitle="Connect with experienced professionals ready to guide your next chapter." />
+            <div className="mentor-grid" style={{ marginBottom: 36 }}>
+              {mentors.map(m => <MentorPreviewCard key={m.userId || m.id} mentor={m} />)}
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <Link to="/mentors" className="btn btn-primary" style={{ gap: 8, fontSize: 15, padding: '12px 28px' }}>View All Mentors <FiArrowRight size={15} /></Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ══ TESTIMONIALS ═════════════════════════════════════════════ */}
+      {testimonials.length > 0 && (
+        <section id="testimonials" style={{ padding: 'clamp(64px,8vw,100px) 0', background: '#fff' }}>
+          <div className="container">
+            <SectionHeading tag="What Mentees Say" title="Stories of Growth & Impact" subtitle="Hear directly from professionals whose careers changed through MentorRise." />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: 20 }}>
+              {testimonials.map(t => (
+                <div key={t.id} style={{ background: 'var(--bg)', borderRadius: 20, border: '1px solid var(--border)', padding: '28px 24px', display: 'flex', flexDirection: 'column', gap: 16, transition: 'all .25s' }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow = 'var(--sh-md)'; e.currentTarget.style.transform = 'translateY(-3px)' }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)' }}>
+                  <div style={{ display: 'flex', gap: 3 }}>
+                    {Array.from({ length: t.rating || 5 }).map((_, i) => <FiStar key={i} size={13} style={{ color: '#F59E0B', fill: '#F59E0B' }} />)}
+                  </div>
+                  <p style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.78, fontStyle: 'italic', flex: 1 }}>"{t.quote}"</p>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                    <div style={{ width: 44, height: 44, borderRadius: '50%', background: t.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 16, flexShrink: 0 }}>{t.initials}</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontWeight: 700, fontSize: 14 }}>{t.name}</p>
+                      <p style={{ fontSize: 12, color: 'var(--text-3)' }}>{t.role}{t.company ? ` · ${t.company}` : ''}</p>
+                    </div>
+                    {t.tag && <span className="chip" style={{ fontSize: 11, flexShrink: 0 }}>{t.tag}</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ══ ADVISORS ════════════════════════════════════════════════ */}
+      {advisors.length > 0 && (
+        <section style={{ padding: 'clamp(64px,8vw,100px) 0', background: 'var(--bg)' }}>
+          <div className="container">
+            <SectionHeading tag="Advisory Board" title="Our Expert Advisors" subtitle="Guided by seasoned leaders who bring decades of cross-industry wisdom." />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: 20 }}>
+              {advisors.map(a => <PersonCard key={a.id} person={a} />)}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ══ COFOUNDERS ══════════════════════════════════════════════ */}
+      {cofounders.length > 0 && (
+        <section style={{ padding: 'clamp(64px,8vw,100px) 0', background: '#fff' }}>
+          <div className="container">
+            <SectionHeading tag="Our Team" title="The People Behind MentorRise" />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'center' }}>
+              {cofounders.map(c => (
+                <div key={c.id} style={{ width: 260 }}>
+                  <PersonCard person={c} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ══ FAQ ══════════════════════════════════════════════════════ */}
+      {faqs.length > 0 && (
+        <section id="faq" style={{ padding: 'clamp(64px,8vw,100px) 0', background: 'var(--bg)' }}>
+          <div className="container" style={{ maxWidth: 780 }}>
+            <SectionHeading tag="FAQ" title="Frequently Asked Questions" subtitle="Everything you need to know before joining MentorRise." />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {faqs.map(faq => <FaqItem key={faq.id} faq={faq} />)}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ══ CONTACT / FINAL CTA ══════════════════════════════════════ */}
+      <section id="contact" style={{ padding: 'clamp(72px,10vw,120px) 0', background: 'linear-gradient(135deg,#0F1F3D,#1E0A2E,#2D0516)' }}>
+        <div className="container" style={{ textAlign: 'center' }}>
+          <span style={{ display: 'inline-block', background: 'rgba(255,255,255,.1)', color: 'rgba(255,255,255,.8)', padding: '4px 14px', borderRadius: 100, fontSize: 12, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: 20 }}>Get in Touch</span>
+          <h2 style={{ fontSize: 'clamp(28px,5vw,48px)', fontWeight: 900, color: '#fff', letterSpacing: '-.03em', marginBottom: 16, lineHeight: 1.15 }}>
+            Ready to Pave Your<br />
+            <span style={{ background: 'linear-gradient(90deg,#60A5FA,#C084FC)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Way to Success?</span>
+          </h2>
+          <p style={{ fontSize: 17, color: 'rgba(255,255,255,.65)', maxWidth: 520, margin: '0 auto 40px', lineHeight: 1.75 }}>
+            Join MentorRise today. Start with a free 15-minute introductory session and experience the difference expert mentorship makes.
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center', marginBottom: 36 }}>
+            <button onClick={() => openLink(siteConfig.intro_session_form_url)} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'white', color: 'var(--primary)', padding: '16px 32px', borderRadius: 12, fontWeight: 800, fontSize: 16, border: 'none', cursor: 'pointer', boxShadow: '0 8px 24px rgba(0,0,0,.2)' }}>
+              Request Introductory Session <FiArrowRight size={18} />
+            </button>
+            <button onClick={() => openLink(siteConfig.mentor_form_url)} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,.1)', color: '#fff', padding: '16px 32px', borderRadius: 12, fontWeight: 700, fontSize: 16, border: '1.5px solid rgba(255,255,255,.2)', cursor: 'pointer', backdropFilter: 'blur(8px)' }}>
+              Become a Mentor
+            </button>
+          </div>
+          <a href="mailto:hello@mentorrise.in" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'rgba(255,255,255,.5)', fontSize: 15, fontWeight: 500, textDecoration: 'none', transition: 'color .2s' }}
+            onMouseEnter={e => e.currentTarget.style.color = '#fff'}
+            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,.5)'}>
+            <FiMail size={16} /> hello@mentorrise.in
+          </a>
         </div>
       </section>
     </div>

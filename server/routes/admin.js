@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
-const { User, MentorProfile, Booking, Subscription, TimeSlot, Advisor, Cofounder } = require('../models');
+const { User, MentorProfile, Booking, Subscription, TimeSlot, Advisor, Cofounder, Faq, Testimonial, SiteConfig } = require('../models');
 const { auth, requireRole } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
@@ -279,6 +279,103 @@ router.delete('/cofounders/:id', guard, async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+});
+
+// ── FAQS CRUD ─────────────────────────────────────────────────────────────────
+
+router.get('/faqs', guard, async (req, res) => {
+  try {
+    const faqs = await Faq.findAll({ order: [['sortOrder', 'ASC'], ['createdAt', 'ASC']] });
+    res.json(faqs);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+router.post('/faqs', guard, async (req, res) => {
+  try {
+    const { question, answer, isActive, sortOrder } = req.body;
+    if (!question || !answer) return res.status(400).json({ message: 'question and answer are required' });
+    const faq = await Faq.create({ question, answer, isActive: isActive !== false, sortOrder: sortOrder || 0 });
+    res.status(201).json(faq);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+router.put('/faqs/:id', guard, async (req, res) => {
+  try {
+    const faq = await Faq.findByPk(req.params.id);
+    if (!faq) return res.status(404).json({ message: 'FAQ not found' });
+    const { question, answer, isActive, sortOrder } = req.body;
+    await faq.update({ question, answer, isActive, sortOrder });
+    res.json(faq);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+router.delete('/faqs/:id', guard, async (req, res) => {
+  try {
+    const faq = await Faq.findByPk(req.params.id);
+    if (!faq) return res.status(404).json({ message: 'FAQ not found' });
+    await faq.destroy();
+    res.json({ message: 'FAQ deleted' });
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+// ── TESTIMONIALS CRUD ─────────────────────────────────────────────────────────
+
+router.get('/testimonials', guard, async (req, res) => {
+  try {
+    const testimonials = await Testimonial.findAll({ order: [['sortOrder', 'ASC'], ['createdAt', 'ASC']] });
+    res.json(testimonials);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+router.post('/testimonials', guard, async (req, res) => {
+  try {
+    const { name, role, company, quote, rating, initials, gradient, tag, isActive, sortOrder } = req.body;
+    if (!name || !quote) return res.status(400).json({ message: 'name and quote are required' });
+    const t = await Testimonial.create({
+      name, role, company, quote, rating: rating || 5,
+      initials: initials || name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(),
+      gradient: gradient || 'linear-gradient(135deg,#2563EB,#1E3A8A)',
+      tag, isActive: isActive !== false, sortOrder: sortOrder || 0,
+    });
+    res.status(201).json(t);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+router.put('/testimonials/:id', guard, async (req, res) => {
+  try {
+    const t = await Testimonial.findByPk(req.params.id);
+    if (!t) return res.status(404).json({ message: 'Testimonial not found' });
+    const { name, role, company, quote, rating, initials, gradient, tag, isActive, sortOrder } = req.body;
+    await t.update({ name, role, company, quote, rating, initials, gradient, tag, isActive, sortOrder });
+    res.json(t);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+router.delete('/testimonials/:id', guard, async (req, res) => {
+  try {
+    const t = await Testimonial.findByPk(req.params.id);
+    if (!t) return res.status(404).json({ message: 'Testimonial not found' });
+    await t.destroy();
+    res.json({ message: 'Testimonial deleted' });
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+// ── SITE CONFIG ───────────────────────────────────────────────────────────────
+
+router.get('/site-config', guard, async (req, res) => {
+  try {
+    const configs = await SiteConfig.findAll({ order: [['key', 'ASC']] });
+    res.json(configs);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+router.put('/site-config/:key', guard, async (req, res) => {
+  try {
+    const { value } = req.body;
+    const [config] = await SiteConfig.findOrCreate({ where: { key: req.params.key }, defaults: { key: req.params.key, value: '' } });
+    await config.update({ value });
+    res.json(config);
+  } catch (err) { res.status(500).json({ message: err.message }); }
 });
 
 module.exports = router;

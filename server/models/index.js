@@ -6,6 +6,9 @@ const Booking = require('./Booking');
 const Subscription = require('./Subscription');
 const Advisor = require('./Advisor');
 const Cofounder = require('./Cofounder');
+const Faq = require('./Faq');
+const Testimonial = require('./Testimonial');
+const SiteConfig = require('./SiteConfig');
 
 // Associations
 User.hasOne(MentorProfile, { foreignKey: 'userId', as: 'mentorProfile' });
@@ -24,4 +27,4 @@ TimeSlot.hasOne(Booking, { foreignKey: 'slotId', as: 'booking' });
 User.hasMany(Subscription, { foreignKey: 'userId', as: 'subscriptions' });
 Subscription.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
-module.exports = { sequelize, User, MentorProfile, TimeSlot, Booking, Subscription, Advisor, Cofounder };
+module.exports = { sequelize, User, MentorProfile, TimeSlot, Booking, Subscription, Advisor, Cofounder, Faq, Testimonial, SiteConfig };
