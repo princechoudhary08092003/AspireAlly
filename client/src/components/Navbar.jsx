@@ -62,7 +62,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
             <img
-              src="/mentorrise-logo.jpg"
+              src="/mentorrise-logo.png"
               alt="MentorRise"
               style={{ height: 44, width: 'auto', borderRadius: 8, display: 'block' }}
             />

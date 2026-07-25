@@ -14,7 +14,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', marginBottom: 18 }}>
-              <img src="/mentorrise-logo.jpg" alt="MentorRise" style={{ height: 44, width: 'auto', borderRadius: 8 }} />
+              <img src="/mentorrise-logo.png" alt="MentorRise" style={{ height: 44, width: 'auto', borderRadius: 8 }} />
             </Link>
             <p style={{ fontSize: 14, lineHeight: 1.75, maxWidth: 280, marginBottom: 20 }}>
               Bridging the gap between ambitious professionals and seasoned industry leaders. Co-creating structured roadmaps for lasting success.
