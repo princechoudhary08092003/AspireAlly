@@ -13,11 +13,8 @@ export default function Footer() {
 
           {/* Brand */}
           <div>
-            <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
-              <div style={{ width: 38, height: 38, borderRadius: 10, background: 'var(--grad-brand)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ color: '#fff', fontWeight: 900, fontSize: 16, letterSpacing: '-.02em' }}>MR</span>
-              </div>
-              <span style={{ fontWeight: 800, fontSize: 18, color: '#fff', letterSpacing: '-.02em' }}>Mentor<span style={{ color: 'var(--gold-b)' }}>Rise</span></span>
+            <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', marginBottom: 18 }}>
+              <img src="/mentorrise-logo.jpg" alt="MentorRise" style={{ height: 44, width: 'auto', borderRadius: 8 }} />
             </Link>
             <p style={{ fontSize: 14, lineHeight: 1.75, maxWidth: 280, marginBottom: 20 }}>
               Bridging the gap between ambitious professionals and seasoned industry leaders. Co-creating structured roadmaps for lasting success.

@@ -60,20 +60,12 @@ export default function Navbar() {
         <div className="container" style={{ height: 68, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 
           {/* Logo */}
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <div style={{
-              width: 36, height: 36, borderRadius: 10,
-              background: 'var(--grad-brand)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 4px 12px rgba(37,99,235,.3)',
-            }}>
-              <span style={{ color: '#fff', fontWeight: 900, fontSize: 18, letterSpacing: '-.02em' }}>MR</span>
-            </div>
-            <span style={{
-              fontWeight: 800, fontSize: 18, letterSpacing: '-.02em',
-              color: isDark ? '#fff' : 'var(--text)',
-              transition: 'color .3s',
-            }}>Mentor<span style={{ color: 'var(--gold-b)' }}>Rise</span></span>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+            <img
+              src="/mentorrise-logo.jpg"
+              alt="MentorRise"
+              style={{ height: 44, width: 'auto', borderRadius: 8, display: 'block' }}
+            />
           </Link>
 
           {/* Desktop links */}
