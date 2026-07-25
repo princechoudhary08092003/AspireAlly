@@ -10,7 +10,7 @@ import {
 /* ── open URL or fallback to email ── */
 const openLink = (url) => {
   if (url) window.open(url, '_blank', 'noopener')
-  else window.location.href = 'mailto:hello@mentorrise.in'
+  else window.location.href = 'mailto:mentorrise47@gmail.com'
 }
 
 /* ── Static content ────────────────────────────────────────────── */
@@ -564,10 +564,10 @@ export default function Home() {
               Become a Mentor
             </button>
           </div>
-          <a href="mailto:hello@mentorrise.in" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'rgba(255,255,255,.5)', fontSize: 15, fontWeight: 500, textDecoration: 'none', transition: 'color .2s' }}
+          <a href="mailto:mentorrise47@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'rgba(255,255,255,.5)', fontSize: 15, fontWeight: 500, textDecoration: 'none', transition: 'color .2s' }}
             onMouseEnter={e => e.currentTarget.style.color = '#fff'}
             onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,.5)'}>
-            <FiMail size={16} /> hello@mentorrise.in
+            <FiMail size={16} /> mentorrise47@gmail.com
           </a>
         </div>
       </section>

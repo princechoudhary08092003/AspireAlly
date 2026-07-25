@@ -76,7 +76,7 @@ export default function ManageSiteConfig() {
                   </button>
                 </div>
                 {!values[cfg.key] && (
-                  <p style={{ fontSize: 12, color: 'var(--warning)', marginTop: 8 }}>No URL set. Button will show an alert prompting to contact hello@mentorrise.in instead.</p>
+                  <p style={{ fontSize: 12, color: 'var(--warning)', marginTop: 8 }}>No URL set. Button will show an alert prompting to contact mentorrise47@gmail.com instead.</p>
                 )}
               </div>
             ))}

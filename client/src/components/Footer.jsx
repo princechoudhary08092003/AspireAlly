@@ -19,10 +19,10 @@ export default function Footer() {
             <p style={{ fontSize: 14, lineHeight: 1.75, maxWidth: 280, marginBottom: 20 }}>
               Bridging the gap between ambitious professionals and seasoned industry leaders. Co-creating structured roadmaps for lasting success.
             </p>
-            <a href="mailto:hello@mentorrise.in" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'rgba(255,255,255,.5)', transition: 'color .2s' }}
+            <a href="mailto:mentorrise47@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'rgba(255,255,255,.5)', transition: 'color .2s' }}
               onMouseEnter={e => e.currentTarget.style.color = '#fff'}
               onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,.5)'}>
-              <FiMail size={14} /> hello@mentorrise.in
+              <FiMail size={14} /> mentorrise47@gmail.com
             </a>
           </div>
 
