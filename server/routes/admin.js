@@ -378,22 +378,22 @@ router.delete('/testimonials/:id', guard, async (req, res) => {
   } catch (err) { res.status(500).json({ message: err.message }); }
 });
 
-// ── SITE CONFIG ───────────────────────────────────────────────────────────────
+// ── WIPE TEST DATA ────────────────────────────────────────────────────────────
+// Deletes all non-admin users, bookings, slots, testimonials, subscriptions.
+// FAQs, site config, advisors, and cofounders are preserved.
 
-router.get('/site-config', guard, async (req, res) => {
+router.post('/wipe-test-data', guard, async (req, res) => {
   try {
-    const configs = await SiteConfig.findAll({ order: [['key', 'ASC']] });
-    res.json(configs);
-  } catch (err) { res.status(500).json({ message: err.message }); }
-});
-
-router.put('/site-config/:key', guard, async (req, res) => {
-  try {
-    const { value } = req.body;
-    const [config] = await SiteConfig.findOrCreate({ where: { key: req.params.key }, defaults: { key: req.params.key, value: '' } });
-    await config.update({ value });
-    res.json(config);
-  } catch (err) { res.status(500).json({ message: err.message }); }
+    await Booking.destroy({ where: {} });
+    await TimeSlot.destroy({ where: {} });
+    await Subscription.destroy({ where: {} });
+    await Testimonial.destroy({ where: {} });
+    await MentorProfile.destroy({ where: {} });
+    await User.destroy({ where: { role: ['mentor', 'mentee'] } });
+    res.json({ message: 'All test data wiped. Platform is fresh.' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 module.exports = router;

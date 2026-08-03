@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../utils/api'
-import { FiUsers, FiCalendar, FiCreditCard, FiAlertCircle, FiStar, FiHeart, FiMessageSquare, FiSettings } from 'react-icons/fi'
+import toast from 'react-hot-toast'
+import { FiUsers, FiCalendar, FiCreditCard, FiAlertCircle, FiStar, FiHeart, FiMessageSquare, FiTrash2 } from 'react-icons/fi'
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null)
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
+  const [wiping, setWiping] = useState(false)
 
   useEffect(() => {
     Promise.all([
@@ -15,6 +17,24 @@ export default function AdminDashboard() {
     ]).finally(() => setLoading(false))
   }, [])
 
+  const handleWipe = async () => {
+    const confirmed = window.confirm(
+      'This will permanently delete ALL mentors, mentees, bookings, sessions, testimonials, and subscriptions.\n\nAdmin accounts, FAQs, advisors, and co-founders are kept.\n\nType "WIPE" in the next prompt to confirm.'
+    )
+    if (!confirmed) return
+    const typed = window.prompt('Type WIPE to confirm:')
+    if (typed !== 'WIPE') return toast.error('Cancelled — text did not match.')
+    setWiping(true)
+    try {
+      await api.post('/admin/wipe-test-data')
+      toast.success('Platform wiped. All test data cleared.')
+      setBookings([])
+      setStats(s => ({ ...s, totalMentors: 0, totalMentees: 0, totalBookings: 0, activeSubscriptions: 0, pendingMentors: 0, pendingMentees: 0 }))
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Wipe failed')
+    } finally { setWiping(false) }
+  }
+
   if (loading) return <div className="loading-center"><div className="spinner" /></div>
 
   const statCards = [
@@ -22,7 +42,7 @@ export default function AdminDashboard() {
     { icon: <FiUsers />, label: 'Total Mentees', value: stats?.totalMentees || 0, color: 'var(--primary)', link: '/admin/mentees' },
     { icon: <FiCalendar />, label: 'Total Bookings', value: stats?.totalBookings || 0, color: 'var(--success)', link: '/admin/bookings' },
     { icon: <FiCreditCard />, label: 'Active Subscriptions', value: stats?.activeSubscriptions || 0, color: 'var(--gold)', link: '/admin/subscriptions' },
-    { icon: <FiAlertCircle />, label: 'Pending Approvals', value: stats?.pendingMentors || 0, color: 'var(--warning)', link: '/admin/mentors' },
+    { icon: <FiAlertCircle />, label: 'Pending Approvals', value: (stats?.pendingMentors || 0) + (stats?.pendingMentees || 0), color: 'var(--warning)', link: '/admin/mentors' },
   ]
 
   return (
@@ -80,7 +100,7 @@ export default function AdminDashboard() {
                 <FiUsers size={15} /> Manage & Approve Mentors
               </Link>
               <Link to="/admin/mentees" className="btn btn-ghost" style={{ justifyContent: 'flex-start', gap: 10 }}>
-                <FiUsers size={15} /> View All Mentees
+                <FiUsers size={15} /> Manage & Approve Mentees
               </Link>
               <Link to="/admin/bookings" className="btn btn-ghost" style={{ justifyContent: 'flex-start', gap: 10 }}>
                 <FiCalendar size={15} /> All Session Bookings
@@ -100,9 +120,19 @@ export default function AdminDashboard() {
               <Link to="/admin/faqs" className="btn btn-ghost" style={{ justifyContent: 'flex-start', gap: 10 }}>
                 <FiMessageSquare size={15} /> Manage FAQs
               </Link>
-              <Link to="/admin/site-config" className="btn btn-ghost" style={{ justifyContent: 'flex-start', gap: 10 }}>
-                <FiSettings size={15} /> Site Settings (Form Links)
-              </Link>
+
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12, marginTop: 4 }}>
+                <button
+                  onClick={handleWipe}
+                  disabled={wiping}
+                  className="btn btn-sm"
+                  style={{ justifyContent: 'flex-start', gap: 10, width: '100%', background: '#FEF2F2', color: '#B91C1C', border: '1px solid #FECACA' }}>
+                  <FiTrash2 size={14} /> {wiping ? 'Wiping…' : 'Wipe All Test Data'}
+                </button>
+                <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6, lineHeight: 1.5 }}>
+                  Clears all mentors, mentees, bookings, testimonials. FAQs and admins are kept.
+                </p>
+              </div>
             </div>
           </div>
         </div>
