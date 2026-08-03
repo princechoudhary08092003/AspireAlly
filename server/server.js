@@ -11,7 +11,7 @@ const server = app.listen(PORT, () => {
 });
 
 // Then connect to DB and seed in the background
-sequelize.sync({ alter: false })
+sequelize.sync({ alter: true })
   .then(async () => {
     console.log('Database connected and synced');
     await seedAll();

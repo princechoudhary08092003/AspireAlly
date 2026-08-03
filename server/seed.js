@@ -153,33 +153,37 @@ const seedSiteConfig = async () => {
 };
 
 const seedAll = async () => {
+  const isProd = process.env.NODE_ENV === 'production';
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@mentorrise.in';
-  await seedUser({ email: adminEmail, password: process.env.ADMIN_PASSWORD || 'Admin@123', firstName: 'Admin', lastName: 'MentorRise', role: 'admin' });
-  await seedUser({ email: 'demo.admin@mentorrise.in', password: 'Demo@1234', firstName: 'Demo', lastName: 'Admin', role: 'admin' });
-  await seedUser({ email: 'mentor@demo.com', password: 'Demo@1234', firstName: 'Arjun', lastName: 'Sharma', role: 'mentor' });
-  await seedUser({ email: 'mentee@demo.com', password: 'Demo@1234', firstName: 'Priya', lastName: 'Kapoor', role: 'mentee' });
+  const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123';
 
-  // Always ensure demo mentor is approved and visible (model defaults to false)
-  const demoMentor = await User.findOne({ where: { email: 'mentor@demo.com' } });
-  if (demoMentor) {
-    await MentorProfile.update(
-      {
-        isApproved: true,
-        isVisible: true,
-        title: 'Senior Software Engineer',
-        company: 'MentorRise Demo',
-        bio: 'Demo mentor account for testing the platform. Available to guide mentees on technology, career growth, and leadership.',
-        expertise: ['Technology', 'Career Growth', 'Leadership'],
-      },
-      { where: { userId: demoMentor.id } }
-    );
+  // Always seed the real admin account
+  await seedUser({ email: adminEmail, password: adminPassword, firstName: 'Admin', lastName: 'MentorRise', role: 'admin' });
+
+  if (!isProd) {
+    // Local dev only — demo accounts for testing
+    await seedUser({ email: 'demo.admin@mentorrise.in', password: 'Demo@1234', firstName: 'Demo', lastName: 'Admin', role: 'admin' });
+    await seedUser({ email: 'mentor@demo.com', password: 'Demo@1234', firstName: 'Arjun', lastName: 'Sharma', role: 'mentor' });
+    await seedUser({ email: 'mentee@demo.com', password: 'Demo@1234', firstName: 'Priya', lastName: 'Kapoor', role: 'mentee' });
+
+    const demoMentor = await User.findOne({ where: { email: 'mentor@demo.com' } });
+    if (demoMentor) {
+      await MentorProfile.update(
+        { isApproved: true, isVisible: true, title: 'Senior Software Engineer', company: 'MentorRise Demo', bio: 'Demo mentor for local testing.', expertise: ['Technology', 'Career Growth', 'Leadership'] },
+        { where: { userId: demoMentor.id } }
+      );
+    }
   }
 
-  await seedAdvisors();
-  await seedCofounders();
-  await seedFaqs();
-  await seedTestimonials();
-  await seedSiteConfig();
+  // Advisors, cofounders, FAQs, testimonials, site config — skip placeholder seeds in production
+  if (!isProd) {
+    await seedAdvisors();
+    await seedCofounders();
+    await seedTestimonials();
+  }
+
+  await seedFaqs();      // FAQs are real content — seed in all envs
+  await seedSiteConfig(); // Config keys must exist in all envs
 };
 
 module.exports = { seedAll };
