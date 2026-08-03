@@ -10,6 +10,7 @@ const User = sequelize.define('User', {
   firstName: { type: DataTypes.STRING, allowNull: false },
   lastName: { type: DataTypes.STRING, allowNull: false },
   isActive: { type: DataTypes.BOOLEAN, defaultValue: true },
+  isApproved: { type: DataTypes.BOOLEAN, defaultValue: false },
   isEmailVerified: { type: DataTypes.BOOLEAN, defaultValue: false },
   emailVerificationToken: { type: DataTypes.STRING, allowNull: true },
   emailVerificationExpiry: { type: DataTypes.DATE, allowNull: true },

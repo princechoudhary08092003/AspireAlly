@@ -5,7 +5,7 @@ const seedUser = async (data) => {
   const exists = await User.findOne({ where: { email: data.email } });
   if (!exists) {
     const hashed = await bcrypt.hash(data.password, 12);
-    const user = await User.create({ ...data, password: hashed, isEmailVerified: true, isActive: true });
+    const user = await User.create({ ...data, password: hashed, isEmailVerified: true, isActive: true, isApproved: true });
     if (data.role === 'mentor') await MentorProfile.create({ userId: user.id });
     console.log(`Seeded [${data.role}]: ${data.email}`);
   }
@@ -110,6 +110,7 @@ const seedTestimonials = async () => {
       tag: 'Career Growth',
       isActive: true,
       sortOrder: 1,
+      submittedByUserId: null,
     },
     {
       name: 'Mentee Name',

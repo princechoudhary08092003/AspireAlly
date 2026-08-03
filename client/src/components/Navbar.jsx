@@ -157,9 +157,9 @@ export default function Navbar() {
             )}
             {/* Become a Mentor CTA — always visible on desktop when not logged in */}
             {!user && (
-              <a href="/#contact" className="hide-md" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 14px', borderRadius: 8, fontSize: 13, fontWeight: 600, background: isDark ? 'rgba(255,255,255,.1)' : 'var(--maroon)', color: '#fff', textDecoration: 'none', border: isDark ? '1px solid rgba(255,255,255,.2)' : 'none' }}>
+              <Link to="/register?role=mentor" className="hide-md" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 14px', borderRadius: 8, fontSize: 13, fontWeight: 600, background: isDark ? 'rgba(255,255,255,.1)' : 'var(--maroon)', color: '#fff', textDecoration: 'none', border: isDark ? '1px solid rgba(255,255,255,.2)' : 'none' }}>
                 Become a Mentor
-              </a>
+              </Link>
             )}
 
             {/* Mobile hamburger */}

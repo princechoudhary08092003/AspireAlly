@@ -1,23 +1,52 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { FiSearch, FiFilter } from 'react-icons/fi'
 import MentorCard from '../components/MentorCard'
 import api from '../utils/api'
+import { useAuth } from '../context/AuthContext'
 
 const EXPERTISE_OPTIONS = ['Leadership', 'Technology', 'Marketing', 'Finance', 'Operations', 'HR', 'Sales', 'Strategy', 'Product', 'Design']
 
 export default function Mentors() {
+  const { user } = useAuth()
   const [mentors, setMentors] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('')
 
+  const isGated = user?.role === 'mentee' && !user?.isApproved
+
   useEffect(() => {
+    if (isGated) { setLoading(false); return }
     setLoading(true)
     const params = new URLSearchParams()
     if (search) params.set('search', search)
     if (filter) params.set('expertise', filter)
     api.get(`/mentors?${params}`).then(r => setMentors(r.data)).finally(() => setLoading(false))
-  }, [search, filter])
+  }, [search, filter, isGated])
+
+  if (isGated) {
+    return (
+      <div>
+        <div style={{ background: 'linear-gradient(135deg, #0F172A, #1E3A8A)', padding: '60px 0 80px', color: 'white', textAlign: 'center' }}>
+          <div className="container">
+            <div className="badge badge-gold" style={{ marginBottom: 16 }}>Our Mentors</div>
+            <h1 className="h1" style={{ color: 'white', marginBottom: 16 }}>Meet Your <span style={{ background: 'linear-gradient(135deg, #F59E0B, #D4A017)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Industry Leaders</span></h1>
+          </div>
+        </div>
+        <div className="container" style={{ marginTop: -32, paddingBottom: 80 }}>
+          <div style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--border)', padding: '40px 32px', maxWidth: 520, margin: '0 auto', textAlign: 'center' }}>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>⏳</div>
+            <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 12 }}>Account Pending Approval</h2>
+            <p style={{ fontSize: 15, color: 'var(--text-2)', lineHeight: 1.75, marginBottom: 20 }}>
+              Your mentee account is awaiting admin approval. Once approved, you will be able to browse our mentor directory and book sessions.
+            </p>
+            <Link to="/mentee/dashboard" className="btn btn-primary">Go to Dashboard</Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div>

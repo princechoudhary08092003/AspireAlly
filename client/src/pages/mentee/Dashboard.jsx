@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import api from '../../utils/api'
-import { FiCalendar, FiUsers, FiCreditCard, FiArrowRight, FiVideo, FiClock, FiCheckCircle } from 'react-icons/fi'
+import toast from 'react-hot-toast'
+import { FiCalendar, FiUsers, FiCreditCard, FiArrowRight, FiVideo, FiClock, FiCheckCircle, FiStar, FiMessageSquare } from 'react-icons/fi'
 import { format } from 'date-fns'
 
 export default function MenteeDashboard() {
@@ -10,18 +11,61 @@ export default function MenteeDashboard() {
   const [bookings, setBookings] = useState([])
   const [subscription, setSubscription] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [testimonialForm, setTestimonialForm] = useState({ quote: '', rating: 5, tag: '' })
+  const [submittingTestimonial, setSubmittingTestimonial] = useState(false)
+  const [testimonialDone, setTestimonialDone] = useState(false)
 
   useEffect(() => {
+    if (!user?.isApproved) { setLoading(false); return }
     Promise.all([
-      api.get('/bookings/my').then(r => setBookings(r.data)),
+      api.get('/bookings/my').then(r => setBookings(r.data)).catch(() => {}),
       api.get('/payment/subscription').then(r => setSubscription(r.data.subscription)).catch(() => setSubscription(null)),
     ]).finally(() => setLoading(false))
-  }, [])
+  }, [user?.isApproved])
 
   const upcoming = bookings.filter(b => b.status === 'confirmed')
   const past = bookings.filter(b => b.status === 'completed')
 
+  const handleTestimonialSubmit = async () => {
+    if (!testimonialForm.quote.trim() || testimonialForm.quote.trim().length < 20) {
+      return toast.error('Please write at least 20 characters')
+    }
+    setSubmittingTestimonial(true)
+    try {
+      await api.post('/testimonials', testimonialForm)
+      toast.success('Thank you! Your testimonial is pending review.')
+      setTestimonialDone(true)
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to submit')
+    } finally { setSubmittingTestimonial(false) }
+  }
+
   if (loading) return <div className="loading-center"><div className="spinner" /></div>
+
+  if (!user?.isApproved) {
+    return (
+      <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
+        <div style={{ background: 'linear-gradient(135deg, #0F172A, #1E3A8A)', padding: '40px 0 60px', color: 'white' }}>
+          <div className="container">
+            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 14, marginBottom: 6 }}>Welcome</p>
+            <h1 style={{ fontSize: 28, fontWeight: 700, color: 'white', marginBottom: 4 }}>{user?.firstName} {user?.lastName}</h1>
+          </div>
+        </div>
+        <div className="container" style={{ marginTop: -32, paddingBottom: 60 }}>
+          <div style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--border)', padding: '40px 32px', maxWidth: 560, textAlign: 'center' }}>
+            <div style={{ width: 64, height: 64, background: '#FEF3C7', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: 28 }}>⏳</div>
+            <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 12 }}>Account Pending Approval</h2>
+            <p style={{ fontSize: 15, color: 'var(--text-2)', lineHeight: 1.75, marginBottom: 20 }}>
+              Your mentee account has been registered and is currently awaiting admin approval. You will be able to browse mentors and book sessions once your account is approved.
+            </p>
+            <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+              Questions? Email us at <a href="mailto:mentorrise47@gmail.com" style={{ color: 'var(--primary)' }}>mentorrise47@gmail.com</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
@@ -110,6 +154,55 @@ export default function MenteeDashboard() {
             </div>
           </div>
         </div>
+
+        {/* Testimonial form — only if has at least one booking */}
+        {bookings.length > 0 && (
+          <div className="card" style={{ marginTop: 24, padding: 28 }}>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 20 }}>
+              <div style={{ width: 40, height: 40, background: 'var(--primary-xl)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
+                <FiMessageSquare size={18} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: 16, fontWeight: 700 }}>Share Your Experience</h3>
+                <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>Your testimonial helps others discover MentorRise</p>
+              </div>
+            </div>
+            {testimonialDone ? (
+              <div style={{ background: '#F0FDF4', border: '1px solid #86EFAC', borderRadius: 10, padding: '16px 20px', color: '#166534', fontSize: 14 }}>
+                Thank you! Your testimonial has been submitted and is pending review by our team.
+              </div>
+            ) : (
+              <>
+                <div className="form-group" style={{ marginBottom: 16 }}>
+                  <label className="form-label">Your Experience *</label>
+                  <textarea className="form-input form-textarea" placeholder="Share what the mentorship experience meant to you (min 20 characters)…" style={{ minHeight: 90 }}
+                    value={testimonialForm.quote} onChange={e => setTestimonialForm(f => ({ ...f, quote: e.target.value }))} />
+                </div>
+                <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 20 }}>
+                  <div className="form-group" style={{ flex: 1, minWidth: 140 }}>
+                    <label className="form-label">Rating</label>
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      {[1, 2, 3, 4, 5].map(n => (
+                        <button key={n} onClick={() => setTestimonialForm(f => ({ ...f, rating: n }))}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2 }}>
+                          <FiStar size={22} style={{ color: n <= testimonialForm.rating ? '#F59E0B' : '#D1D5DB', fill: n <= testimonialForm.rating ? '#F59E0B' : 'none' }} />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="form-group" style={{ flex: 1, minWidth: 140 }}>
+                    <label className="form-label">Category (optional)</label>
+                    <input className="form-input" placeholder="e.g. Career Growth" value={testimonialForm.tag}
+                      onChange={e => setTestimonialForm(f => ({ ...f, tag: e.target.value }))} />
+                  </div>
+                </div>
+                <button className="btn btn-primary" onClick={handleTestimonialSubmit} disabled={submittingTestimonial}>
+                  {submittingTestimonial ? 'Submitting…' : 'Submit Testimonial'}
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

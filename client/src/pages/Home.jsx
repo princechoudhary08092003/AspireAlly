@@ -4,14 +4,8 @@ import api from '../utils/api'
 import {
   FiArrowRight, FiCheck, FiStar, FiBriefcase,
   FiChevronDown, FiChevronUp, FiMail,
-  FiTarget, FiTrendingUp, FiShield, FiHeart, FiBookOpen, FiThumbsUp, FiUsers, FiAward, FiLinkedin
+  FiTarget, FiTrendingUp, FiShield, FiBookOpen, FiThumbsUp, FiUsers, FiAward, FiLinkedin
 } from 'react-icons/fi'
-
-/* ── open URL or fallback to email ── */
-const openLink = (url) => {
-  if (url) window.open(url, '_blank', 'noopener')
-  else window.location.href = 'mailto:mentorrise47@gmail.com'
-}
 
 /* ── Static content ────────────────────────────────────────────── */
 const WHY_ITEMS = [
@@ -171,7 +165,6 @@ export default function Home() {
   const [cofounders, setCofounders] = useState([])
   const [testimonials, setTestimonials] = useState([])
   const [faqs, setFaqs] = useState([])
-  const [siteConfig, setSiteConfig] = useState({})
   const [activeTab, setActiveTab] = useState('mentee')
 
   useEffect(() => {
@@ -180,7 +173,6 @@ export default function Home() {
     api.get('/cofounders').then(r => setCofounders(r.data)).catch(() => {})
     api.get('/testimonials').then(r => setTestimonials(r.data)).catch(() => {})
     api.get('/faqs').then(r => setFaqs(r.data)).catch(() => {})
-    api.get('/site-config').then(r => setSiteConfig(r.data)).catch(() => {})
   }, [])
 
   return (
@@ -220,12 +212,12 @@ export default function Home() {
             <Link to="/mentors" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--grad-brand)', color: '#fff', padding: '14px 28px', borderRadius: 12, fontWeight: 700, fontSize: 15, textDecoration: 'none', boxShadow: '0 8px 24px rgba(37,99,235,.4)' }}>
               Find a Mentor <FiArrowRight size={16} />
             </Link>
-            <button onClick={() => openLink(siteConfig.intro_session_form_url)} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,.1)', color: '#fff', padding: '14px 28px', borderRadius: 12, fontWeight: 700, fontSize: 15, border: '1.5px solid rgba(255,255,255,.2)', cursor: 'pointer', backdropFilter: 'blur(8px)' }}>
+            <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,.1)', color: '#fff', padding: '14px 28px', borderRadius: 12, fontWeight: 700, fontSize: 15, border: '1.5px solid rgba(255,255,255,.2)', textDecoration: 'none', backdropFilter: 'blur(8px)' }}>
               <FiBookOpen size={16} /> Request Introductory Session
-            </button>
-            <button onClick={() => openLink(siteConfig.mentor_form_url)} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'transparent', color: 'rgba(255,255,255,.8)', padding: '14px 28px', borderRadius: 12, fontWeight: 600, fontSize: 15, border: '1.5px solid rgba(255,255,255,.12)', cursor: 'pointer' }}>
+            </Link>
+            <Link to="/register?role=mentor" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'transparent', color: 'rgba(255,255,255,.8)', padding: '14px 28px', borderRadius: 12, fontWeight: 600, fontSize: 15, border: '1.5px solid rgba(255,255,255,.12)', textDecoration: 'none' }}>
               Become a Mentor
-            </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -280,9 +272,9 @@ export default function Home() {
             ))}
           </div>
           <div style={{ textAlign: 'center', marginTop: 44 }}>
-            <button onClick={() => openLink(siteConfig.mentee_form_url)} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'white', color: 'var(--primary)', padding: '14px 32px', borderRadius: 12, fontWeight: 700, fontSize: 15, border: 'none', cursor: 'pointer', boxShadow: '0 8px 24px rgba(0,0,0,.2)' }}>
+            <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'white', color: 'var(--primary)', padding: '14px 32px', borderRadius: 12, fontWeight: 700, fontSize: 15, textDecoration: 'none', boxShadow: '0 8px 24px rgba(0,0,0,.2)' }}>
               Apply Now <FiArrowRight size={16} />
-            </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -301,10 +293,10 @@ export default function Home() {
                 Our programme is built on three pillars: the right mentor match, a structured engagement framework, and continuous support, so every mentee gets the most out of every session.
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-                <button onClick={() => openLink(siteConfig.mentee_form_url)} className="btn btn-primary" style={{ gap: 8 }}>Apply as Mentee <FiArrowRight size={14} /></button>
-                <button onClick={() => openLink(siteConfig.mentor_form_url)} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'transparent', color: 'var(--primary)', padding: '10px 20px', borderRadius: 10, fontWeight: 600, fontSize: 14, border: '1.5px solid var(--primary)', cursor: 'pointer' }}>
+                <Link to="/register" className="btn btn-primary" style={{ gap: 8 }}>Apply as Mentee <FiArrowRight size={14} /></Link>
+                <Link to="/register?role=mentor" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'transparent', color: 'var(--primary)', padding: '10px 20px', borderRadius: 10, fontWeight: 600, fontSize: 14, border: '1.5px solid var(--primary)', textDecoration: 'none' }}>
                   Become a Mentor
-                </button>
+                </Link>
               </div>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
@@ -394,7 +386,7 @@ export default function Home() {
                     <p style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.6 }}>{item}</p>
                   </div>
                 ))}
-                <button onClick={() => openLink(siteConfig.mentee_form_url)} className="btn btn-primary btn-full" style={{ marginTop: 20, gap: 8 }}>Apply as Mentee <FiArrowRight size={14} /></button>
+                <Link to="/register" className="btn btn-primary btn-full" style={{ marginTop: 20, gap: 8 }}>Apply as Mentee <FiArrowRight size={14} /></Link>
               </div>
               <div className="card" style={{ padding: '28px 24px' }}>
                 <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, color: 'var(--primary)' }}>What's in it for You?</h3>
@@ -418,9 +410,9 @@ export default function Home() {
                     <p style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.6 }}>{item}</p>
                   </div>
                 ))}
-                <button onClick={() => openLink(siteConfig.mentor_form_url)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'var(--maroon)', color: '#fff', padding: '12px 20px', borderRadius: 10, fontWeight: 700, fontSize: 14, border: 'none', cursor: 'pointer', width: '100%', marginTop: 20 }}>
+                <Link to="/register?role=mentor" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'var(--maroon)', color: '#fff', padding: '12px 20px', borderRadius: 10, fontWeight: 700, fontSize: 14, textDecoration: 'none', width: '100%', marginTop: 20 }}>
                   Become a Mentor <FiArrowRight size={14} />
-                </button>
+                </Link>
               </div>
               <div className="card" style={{ padding: '28px 24px' }}>
                 <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, color: 'var(--maroon)' }}>Additional Opportunities</h3>
@@ -557,12 +549,12 @@ export default function Home() {
             Join MentorRise today. Start with a free 15-minute introductory session and experience the difference expert mentorship makes.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center', marginBottom: 36 }}>
-            <button onClick={() => openLink(siteConfig.intro_session_form_url)} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'white', color: 'var(--primary)', padding: '16px 32px', borderRadius: 12, fontWeight: 800, fontSize: 16, border: 'none', cursor: 'pointer', boxShadow: '0 8px 24px rgba(0,0,0,.2)' }}>
+            <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'white', color: 'var(--primary)', padding: '16px 32px', borderRadius: 12, fontWeight: 800, fontSize: 16, textDecoration: 'none', boxShadow: '0 8px 24px rgba(0,0,0,.2)' }}>
               Request Introductory Session <FiArrowRight size={18} />
-            </button>
-            <button onClick={() => openLink(siteConfig.mentor_form_url)} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,.1)', color: '#fff', padding: '16px 32px', borderRadius: 12, fontWeight: 700, fontSize: 16, border: '1.5px solid rgba(255,255,255,.2)', cursor: 'pointer', backdropFilter: 'blur(8px)' }}>
+            </Link>
+            <Link to="/register?role=mentor" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,.1)', color: '#fff', padding: '16px 32px', borderRadius: 12, fontWeight: 700, fontSize: 16, textDecoration: 'none', border: '1.5px solid rgba(255,255,255,.2)', backdropFilter: 'blur(8px)' }}>
               Become a Mentor
-            </button>
+            </Link>
           </div>
           <a href="mailto:mentorrise47@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'rgba(255,255,255,.5)', fontSize: 15, fontWeight: 500, textDecoration: 'none', transition: 'color .2s' }}
             onMouseEnter={e => e.currentTarget.style.color = '#fff'}

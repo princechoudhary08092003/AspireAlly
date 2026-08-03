@@ -78,7 +78,7 @@ router.get('/verify-email', async (req, res) => {
     const jwtToken = signToken(user.id);
     res.json({
       token: jwtToken,
-      user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role },
+      user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role, isApproved: user.isApproved },
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -133,7 +133,7 @@ router.post('/login', async (req, res) => {
     }
 
     const token = signToken(user.id);
-    res.json({ token, user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role } });
+    res.json({ token, user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role, isApproved: user.isApproved } });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -177,7 +177,7 @@ router.post('/google', async (req, res) => {
     }
 
     const token = signToken(user.id);
-    res.json({ token, user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role } });
+    res.json({ token, user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role, isApproved: user.isApproved } });
   } catch (err) {
     console.error('Google auth error:', err.message);
     res.status(401).json({ message: 'Google sign-in failed. Please try again.' });
@@ -199,7 +199,7 @@ router.get('/me', auth, async (req, res) => {
   }
 
   res.json({
-    id: u.id, email: u.email, firstName: u.firstName, lastName: u.lastName, role: u.role,
+    id: u.id, email: u.email, firstName: u.firstName, lastName: u.lastName, role: u.role, isApproved: u.isApproved,
     mentorProfile: profile, hasActiveSubscription,
   });
 });

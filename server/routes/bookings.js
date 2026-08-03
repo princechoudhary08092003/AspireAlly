@@ -5,6 +5,7 @@ const { auth, requireRole } = require('../middleware/auth');
 // Mentee: book a slot
 router.post('/', auth, requireRole('mentee'), async (req, res) => {
   try {
+    if (!req.user.isApproved) return res.status(403).json({ message: 'Your account is pending admin approval. Please wait.' });
     const { slotId, menteeNotes } = req.body;
     const slot = await TimeSlot.findByPk(slotId);
     if (!slot) return res.status(404).json({ message: 'Slot not found' });

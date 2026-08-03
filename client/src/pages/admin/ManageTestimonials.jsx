@@ -77,35 +77,79 @@ export default function ManageTestimonials() {
           </button>
         </div>
 
-        {loading ? <div className="loading-center"><div className="spinner" /></div> : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))', gap: 16 }}>
-            {testimonials.length === 0 && <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)', gridColumn: '1/-1' }}>No testimonials yet.</div>}
-            {testimonials.map(t => (
-              <div key={t.id} className="card" style={{ padding: 20, opacity: t.isActive ? 1 : 0.55 }}>
-                <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 12 }}>
-                  <div style={{ width: 44, height: 44, borderRadius: '50%', background: t.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 16, flexShrink: 0 }}>{t.initials}</div>
-                  <div>
-                    <p style={{ fontWeight: 700, fontSize: 14 }}>{t.name}</p>
-                    <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>{t.role}{t.company ? ` · ${t.company}` : ''}</p>
+        {loading ? <div className="loading-center"><div className="spinner" /></div> : (() => {
+          const pending = testimonials.filter(t => !t.isActive && t.submittedByUserId)
+          const published = testimonials.filter(t => t.isActive || !t.submittedByUserId)
+
+          return (
+            <>
+              {pending.length > 0 && (
+                <div style={{ marginBottom: 32 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                    <h3 style={{ fontSize: 17, fontWeight: 700 }}>Pending Review</h3>
+                    <span style={{ background: '#FEF3C7', color: '#92400E', borderRadius: 100, padding: '2px 10px', fontSize: 12, fontWeight: 700 }}>{pending.length}</span>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))', gap: 16 }}>
+                    {pending.map(t => (
+                      <div key={t.id} className="card" style={{ padding: 20, border: '2px solid #FCD34D' }}>
+                        <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 12 }}>
+                          <div style={{ width: 44, height: 44, borderRadius: '50%', background: t.gradient || 'linear-gradient(135deg,#2563EB,#1D4ED8)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 16, flexShrink: 0 }}>{t.initials}</div>
+                          <div>
+                            <p style={{ fontWeight: 700, fontSize: 14 }}>{t.name}</p>
+                            <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>{t.role}{t.company ? ` · ${t.company}` : ''}</p>
+                          </div>
+                          <span style={{ marginLeft: 'auto', background: '#FEF3C7', color: '#92400E', borderRadius: 100, padding: '2px 8px', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>Pending</span>
+                        </div>
+                        <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.65, marginBottom: 16 }}>"{t.quote}"</p>
+                        <div style={{ display: 'flex', gap: 8 }}>
+                          <button className="btn btn-sm" style={{ background: 'var(--success)', color: '#fff', border: 'none', gap: 6, flex: 1 }}
+                            onClick={() => handleToggle(t)}>
+                            Approve & Publish
+                          </button>
+                          <button className="btn btn-sm" style={{ color: 'var(--error)', background: 'var(--error-l)', border: 'none' }}
+                            onClick={() => handleDelete(t.id)}>
+                            <FiTrash2 size={13} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.65, marginBottom: 12, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>"{t.quote}"</p>
-                <div style={{ display: 'flex', gap: 6, alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                  <div style={{ display: 'flex', gap: 4 }}>
-                    {Array.from({ length: t.rating }).map((_, i) => <FiStar key={i} size={12} style={{ color: '#F59E0B', fill: '#F59E0B' }} />)}
-                    {t.tag && <span className="chip" style={{ fontSize: 11, marginLeft: 4 }}>{t.tag}</span>}
-                    <span className={`badge ${t.isActive ? 'badge-success' : 'badge-gray'}`} style={{ fontSize: 11 }}>{t.isActive ? 'Active' : 'Hidden'}</span>
-                  </div>
-                  <div style={{ display: 'flex', gap: 6 }}>
-                    <button className="btn btn-ghost btn-sm" onClick={() => openEdit(t)}><FiEdit2 size={13} /></button>
-                    <button className="btn btn-ghost btn-sm" onClick={() => handleToggle(t)} style={{ fontSize: 11 }}>{t.isActive ? 'Hide' : 'Show'}</button>
-                    <button className="btn btn-sm" style={{ color: 'var(--error)', background: 'var(--error-l)', border: 'none' }} onClick={() => handleDelete(t.id)}><FiTrash2 size={13} /></button>
-                  </div>
+              )}
+
+              <div>
+                <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 16 }}>All Testimonials</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))', gap: 16 }}>
+                  {published.length === 0 && <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)', gridColumn: '1/-1' }}>No testimonials yet.</div>}
+                  {published.map(t => (
+                    <div key={t.id} className="card" style={{ padding: 20, opacity: t.isActive ? 1 : 0.55 }}>
+                      <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 12 }}>
+                        <div style={{ width: 44, height: 44, borderRadius: '50%', background: t.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 16, flexShrink: 0 }}>{t.initials}</div>
+                        <div>
+                          <p style={{ fontWeight: 700, fontSize: 14 }}>{t.name}</p>
+                          <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>{t.role}{t.company ? ` · ${t.company}` : ''}</p>
+                        </div>
+                      </div>
+                      <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.65, marginBottom: 12, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>"{t.quote}"</p>
+                      <div style={{ display: 'flex', gap: 6, alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', gap: 4 }}>
+                          {Array.from({ length: t.rating }).map((_, i) => <FiStar key={i} size={12} style={{ color: '#F59E0B', fill: '#F59E0B' }} />)}
+                          {t.tag && <span className="chip" style={{ fontSize: 11, marginLeft: 4 }}>{t.tag}</span>}
+                          <span className={`badge ${t.isActive ? 'badge-success' : 'badge-gray'}`} style={{ fontSize: 11 }}>{t.isActive ? 'Active' : 'Hidden'}</span>
+                        </div>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          <button className="btn btn-ghost btn-sm" onClick={() => openEdit(t)}><FiEdit2 size={13} /></button>
+                          <button className="btn btn-ghost btn-sm" onClick={() => handleToggle(t)} style={{ fontSize: 11 }}>{t.isActive ? 'Hide' : 'Show'}</button>
+                          <button className="btn btn-sm" style={{ color: 'var(--error)', background: 'var(--error-l)', border: 'none' }} onClick={() => handleDelete(t.id)}><FiTrash2 size={13} /></button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            </>
+          )
+        })()}
       </div>
 
       {showModal && (

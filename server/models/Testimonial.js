@@ -11,7 +11,8 @@ const Testimonial = sequelize.define('Testimonial', {
   initials: { type: DataTypes.STRING(4) },
   gradient: { type: DataTypes.STRING, defaultValue: 'linear-gradient(135deg,#2563EB,#1E3A8A)' },
   tag: { type: DataTypes.STRING },
-  isActive: { type: DataTypes.BOOLEAN, defaultValue: true },
+  submittedByUserId: { type: DataTypes.UUID, allowNull: true },
+  isActive: { type: DataTypes.BOOLEAN, defaultValue: false },
   sortOrder: { type: DataTypes.INTEGER, defaultValue: 0 },
 }, { tableName: 'testimonials' });
 

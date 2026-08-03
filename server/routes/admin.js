@@ -9,14 +9,16 @@ const guard = [auth, requireRole('admin')];
 // Dashboard stats
 router.get('/stats', guard, async (req, res) => {
   try {
-    const [totalMentors, totalMentees, totalBookings, activeSubscriptions, pendingMentors] = await Promise.all([
+    const { Op } = require('sequelize');
+    const [totalMentors, totalMentees, totalBookings, activeSubscriptions, pendingMentors, pendingMentees] = await Promise.all([
       User.count({ where: { role: 'mentor' } }),
       User.count({ where: { role: 'mentee' } }),
       Booking.count(),
       Subscription.count({ where: { status: 'active' } }),
       MentorProfile.count({ where: { isApproved: false } }),
+      User.count({ where: { role: 'mentee', isApproved: false } }),
     ]);
-    res.json({ totalMentors, totalMentees, totalBookings, activeSubscriptions, pendingMentors });
+    res.json({ totalMentors, totalMentees, totalBookings, activeSubscriptions, pendingMentors, pendingMentees });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -73,13 +75,29 @@ router.put('/mentors/:id/profile', guard, upload.single('photo'), async (req, re
   }
 });
 
-// Approve / unapprove mentor
+// Approve / unapprove mentor (also approves/revokes user account)
 router.put('/mentors/:id/approve', guard, async (req, res) => {
   try {
     const profile = await MentorProfile.findOne({ where: { userId: req.params.id } });
     if (!profile) return res.status(404).json({ message: 'Profile not found' });
     await profile.update({ isApproved: req.body.isApproved });
+    // Approving a mentor profile also approves their account access
+    if (req.body.isApproved) {
+      await User.update({ isApproved: true }, { where: { id: req.params.id } });
+    }
     res.json({ message: `Mentor ${req.body.isApproved ? 'approved' : 'unapproved'}` });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Approve / reject user account (for mentees)
+router.put('/users/:id/approve-account', guard, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (!user || user.role === 'admin') return res.status(404).json({ message: 'User not found' });
+    await user.update({ isApproved: req.body.isApproved });
+    res.json({ message: `Account ${req.body.isApproved ? 'approved' : 'rejected'}` });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
